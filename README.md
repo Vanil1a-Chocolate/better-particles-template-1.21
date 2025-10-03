@@ -1,7 +1,7 @@
 **此模组为Fabric接口开发的模组**\
 当前版本为v1.0.0\
 开放生成的效果为 ***单个粒子,圆***\
-通过`/give @a better-particles:soul_graph_pen`来获取到粒子生成法杖,法杖在主手时通过shfit+滚轮来实现模式切换,模组对产生的粒子进行了管理\
+通过`/give @a better-particles:soul_graph_pen`来获取到粒子生成法杖,法杖在主手时通过shift+滚轮来实现模式切换,模组对产生的粒子进行了管理\
 以下为注册的指令:\
 1.`/cleanParticles `一键删除所有生成的粒子\
 2.`/undo`撤销上一个生成操作\
