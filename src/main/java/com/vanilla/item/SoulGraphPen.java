@@ -1,15 +1,18 @@
 package com.vanilla.item;
 
 
+import com.vanilla.BetterParticlesClient;
+import com.vanilla.particle.ModParticle;
 import com.vanilla.util.SendMessageToPlayer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import static com.vanilla.particle.ModParticle.SPARKLE_PARTICLE;
 
 public class SoulGraphPen extends Item {
     public enum ParticleMode {
@@ -71,7 +74,7 @@ public class SoulGraphPen extends Item {
             Vec3d pos = user.getEyePos().add(user.getRotationVec(1).multiply(2));
             switch (CurrentMode) {
                 case CREATE_SINGLE_PARTICLE:
-                    world.addParticle(ParticleTypes.END_ROD, pos.x, pos.y, pos.z, 0, 0.1, 0);
+                    world.addParticle(SPARKLE_PARTICLE, pos.x, pos.y, pos.z, 0, 0.1, 0);
                     break;
                 case CREATE_LINE:
 
