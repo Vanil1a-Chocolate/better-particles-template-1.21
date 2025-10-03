@@ -1,8 +1,8 @@
 package com.vanilla.item;
 
 
-import com.vanilla.BetterParticlesClient;
-import com.vanilla.particle.ModParticle;
+import com.vanilla.function.CreateCircle;
+import com.vanilla.function.CreateInter;
 import com.vanilla.util.SendMessageToPlayer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -77,9 +77,10 @@ public class SoulGraphPen extends Item {
                     world.addParticle(SPARKLE_PARTICLE, pos.x, pos.y, pos.z, 0, 0.1, 0);
                     break;
                 case CREATE_LINE:
-
                 case CREATE_CIRCLE:
-
+                    CreateInter create = new CreateCircle(5,user.getPos(),60);
+                    create.generate(world);
+                    break;
             }
 
         }

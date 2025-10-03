@@ -4,6 +4,7 @@ import com.vanilla.util.SendMessageToPlayer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.particle.Particle;
+import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -33,6 +34,9 @@ public final class ModParticleManager {
     public static ModParticleManager getInstance(){
         return INSTANCE;
     }
+    public long outGetCurrentHandle(){
+        return currentHandleGenerate();
+    }
 
     public void track(String group,Particle particle){
         if(!particlesHandle.contains(group)) particlesHandle.add(group);
@@ -47,6 +51,7 @@ public final class ModParticleManager {
 
     public void cleanGroup(String group){
         Queue<Particle> queue = pool.get(group);
+        particlesHandle.remove(group);
         if(queue == null) return;
         while(!queue.isEmpty()){
             Particle particle = queue.poll();
@@ -55,32 +60,35 @@ public final class ModParticleManager {
     }
 
     public void cleanAllGroup(){
-        for(String group : particlesHandle){
-            boolean isRemoved = particlesHandle.remove(group);
-            if(!isRemoved){
-                SendMessageToPlayer.sendMessageToPlayer("清除失败");
-                return;
-            }
+        for (int i = particlesHandle.size() - 1; i >= 0; i--){
+            String group  = particlesHandle.remove(i);
             cleanGroup(group);
         }
     }
 
-    public void undo(){
+    public boolean undo(){
         int length = particlesHandle.size();
-        if(length == 0) return;
+        if(length == 0) return false;
         cleanGroup(particlesHandle.get(length-1));
-        particlesHandle.remove(length-1);
+        return true;
     }
 
-    public void addParticle(ParticleData data, World world){
+    public void addParticle(SimpleParticleType particle, ParticleData data, World world){
         Vec3d p = data.getPosition();
         Vec3d v = data.getVelocity();
+        world.addParticle(particle,p.x,p.y,p.z,v.x,v.y,v.z);
+    }
 
+    public void addParticle(SimpleParticleType particle, ParticleData data, World world,String handle){
+        ModParticleFactory factory = ModParticleFactory.getInstance();
+        factory.setHandle(handle);
+        addParticle(particle,data,world);
     }
 
     public void printCurrentHandle(){
         for(String group : particlesHandle){
             System.out.println(group);
+            SendMessageToPlayer.sendMessageToPlayer(group);
         }
     }
 }

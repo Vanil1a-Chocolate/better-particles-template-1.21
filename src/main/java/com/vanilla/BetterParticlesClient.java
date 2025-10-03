@@ -1,8 +1,10 @@
 package com.vanilla;
 
+import com.vanilla.command.ModCommand;
 import com.vanilla.item.ModItems;
 import com.vanilla.item.SoulGraphPen;
 import com.vanilla.particle.ModParticle;
+import com.vanilla.particle.ModParticleFactory;
 import com.vanilla.util.MouseScrollEvent;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -18,6 +20,7 @@ public class BetterParticlesClient implements ClientModInitializer {
         @Override
         public void onInitializeClient() {
             ModParticle.initParticles();
+            ModCommand.initCommand();
             ClientPlayConnectionEvents.JOIN.register((handler, sender, client)->{
                 int shiftKey = GLFW.GLFW_KEY_LEFT_SHIFT;
                 long window = MinecraftClient.getInstance().getWindow().getHandle();
