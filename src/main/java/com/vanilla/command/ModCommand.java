@@ -8,6 +8,8 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 
 @Environment(EnvType.CLIENT)
@@ -44,6 +46,10 @@ public class ModCommand {
                     return 1;
                 }))
         ));
+
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("modTest").executes(context -> {
+            return 1;
+        })));
     }
 
 

@@ -3,6 +3,10 @@ package com.vanilla.item;
 
 import com.vanilla.function.CreateCircle;
 import com.vanilla.function.CreateInter;
+import com.vanilla.function.CreateLine;
+import com.vanilla.function.CreateSingleParticle;
+import com.vanilla.particle.ModParticleManager;
+import com.vanilla.util.PointListener;
 import com.vanilla.util.SendMessageToPlayer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -11,8 +15,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
-import static com.vanilla.particle.ModParticle.SPARKLE_PARTICLE;
 
 public class SoulGraphPen extends Item {
     public enum ParticleMode {
@@ -29,6 +31,7 @@ public class SoulGraphPen extends Item {
             int len = values().length;
             return values()[(this.ordinal() - 1 + len) % len];
         }
+
     }
 
     public static ParticleMode CurrentMode;
@@ -46,7 +49,14 @@ public class SoulGraphPen extends Item {
         }else if(number==-1){
             CurrentMode = CurrentMode.prev();
         }
+        if(CurrentMode == ParticleMode.CREATE_LINE){
+            PointListener.onEnterLineMode();
+        }
         sendCurrentModeToPlayer();
+    }
+
+    public ParticleMode getCurrentMode() {
+        return CurrentMode;
     }
 
     private void sendCurrentModeToPlayer() {
@@ -74,9 +84,13 @@ public class SoulGraphPen extends Item {
             Vec3d pos = user.getEyePos().add(user.getRotationVec(1).multiply(2));
             switch (CurrentMode) {
                 case CREATE_SINGLE_PARTICLE:
-                    world.addParticle(SPARKLE_PARTICLE, pos.x, pos.y, pos.z, 0, 0.1, 0);
+                    CreateInter single = new CreateSingleParticle(pos);
+                    single.generate(world);
                     break;
                 case CREATE_LINE:
+                    CreateInter line = new CreateLine(50);
+                    line.generate(world);
+                    break;
                 case CREATE_CIRCLE:
                     CreateInter create = new CreateCircle(5,user.getPos(),60);
                     create.generate(world);

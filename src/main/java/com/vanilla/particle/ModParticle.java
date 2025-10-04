@@ -18,10 +18,11 @@ import net.minecraft.util.Identifier;
 public class ModParticle extends SpriteBillboardParticle {
 
     public static final SimpleParticleType SPARKLE_PARTICLE = FabricParticleTypes.simple();
-
+    public static final SimpleParticleType WARING_PARTICLE = FabricParticleTypes.simple();
 
     public static void initParticles(){
         registerParticles("magic",SPARKLE_PARTICLE);
+        registerParticles("warn",WARING_PARTICLE);
         registerParticleFactory();
     }
 
@@ -30,7 +31,16 @@ public class ModParticle extends SpriteBillboardParticle {
     }
 
     private static void registerParticleFactory(){
-                ParticleFactoryRegistry.getInstance().register(SPARKLE_PARTICLE,ModParticleFactory::new);
+                ParticleFactoryRegistry.getInstance().register(SPARKLE_PARTICLE,(fabricSpriteProvider -> {
+                    ModParticleFactory factory = new ModParticleFactory(fabricSpriteProvider);
+                    ModFactoryManager.addFactory(SPARKLE_PARTICLE,factory);
+                    return factory;
+                }));
+                ParticleFactoryRegistry.getInstance().register(WARING_PARTICLE,(fabricSpriteProvider -> {
+                    ModParticleFactory factory = new ModParticleFactory(fabricSpriteProvider);
+                    ModFactoryManager.addFactory(WARING_PARTICLE,factory);
+                    return factory;
+                }));
     }
 
     protected ModParticle(ClientWorld clientWorld, double x, double y, double z,double vx ,double vy ,double vz,SpriteProvider sprites,int life) {

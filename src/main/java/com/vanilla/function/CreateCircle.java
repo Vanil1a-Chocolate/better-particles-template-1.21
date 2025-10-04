@@ -7,18 +7,20 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class CreateCircle extends CreateFunction {
-    private double radius;
-    private Vec3d position;
-    private ParticleData data;
-    private int precision;
+    private final double radius;
+    private final Vec3d position;
+    private final ParticleData data;
+    private final int precision;
 
     public CreateCircle(double radius, Vec3d position, ParticleData data, int precision) {
+        super(data.getParticleType());
         this.radius = radius;
         this.position = position;
         this.data = data;
         this.precision = precision;
     }
     public CreateCircle(double radius, Vec3d position, int precision) {
+        super(new ParticleData().getParticleType());
         this.radius = radius;
         this.position = position;
         this.data = new ParticleData();
@@ -30,7 +32,7 @@ public class CreateCircle extends CreateFunction {
         double allR = 360.0;
         double eachR = allR / precision;
         ModParticleManager particleManager = ModParticleManager.getInstance();
-        String handle = "CIRCLE"+ particleManager.outGetCurrentHandle();
+        String handle = "CIRCLE_"+ particleManager.outGetCurrentHandle();
         for(int i =0;i<precision;i++){
             double x = position.x + radius * Math.cos(Math.toRadians(i*eachR));
             double z = position.z + radius * Math.sin(Math.toRadians(i*eachR));

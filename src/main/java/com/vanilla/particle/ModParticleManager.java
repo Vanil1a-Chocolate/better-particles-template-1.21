@@ -20,6 +20,7 @@ public final class ModParticleManager {
     private final Map<String, Queue<Particle>> pool = new ConcurrentHashMap<>();
 
     private final List<String> particlesHandle = new ArrayList<>();
+    private final List<String> warningParticlesHandle = new ArrayList<>();
 
     private long currentHandle;
 
@@ -83,6 +84,23 @@ public final class ModParticleManager {
         ModParticleFactory factory = ModParticleFactory.getInstance();
         factory.setHandle(handle);
         addParticle(particle,data,world);
+    }
+
+    public void addWarnParticle(World world,Vec3d p){
+        ModParticleFactory.setModeParticleFactory(ModFactoryManager.getFactory(ModParticle.WARING_PARTICLE));
+        String handle = "WARN_"+ currentHandleGenerate();
+        warningParticlesHandle.add(handle);
+        addParticle(ModParticle.WARING_PARTICLE,new ParticleData(p),world,handle);
+        ModParticleFactory.getInstance().reSetFlag();
+        ModParticleFactory.setModeParticleFactory(null);
+
+    }
+
+    public void cleanWarnParticle(){
+        for(String handle : warningParticlesHandle){
+            cleanGroup(handle);
+        }
+        warningParticlesHandle.clear();
     }
 
     public void printCurrentHandle(){

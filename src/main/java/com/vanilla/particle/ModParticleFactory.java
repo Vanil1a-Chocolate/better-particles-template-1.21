@@ -1,5 +1,6 @@
 package com.vanilla.particle;
 
+import com.vanilla.BetterParticles;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleFactory;
 import net.minecraft.client.particle.SpriteProvider;
@@ -7,7 +8,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particle.SimpleParticleType;
 import org.jetbrains.annotations.Nullable;
 
-public class ModParticleFactory implements ParticleFactory<SimpleParticleType> {
+public class ModParticleFactory implements ParticleFactory<SimpleParticleType>{
     private final SpriteProvider spriteProvider;
     private final ParticleData data;
 
@@ -21,10 +22,13 @@ public class ModParticleFactory implements ParticleFactory<SimpleParticleType> {
         return INSTANCE;
     }
 
+    public static void setModeParticleFactory(ModParticleFactory factory) {
+        INSTANCE = factory;
+    }
+
     public ModParticleFactory(ParticleData data, SpriteProvider spriteProvider) {
         this.data = data;
         this.spriteProvider = spriteProvider;
-        INSTANCE = this;
     }
 
     public void reSetFlag(){
@@ -48,6 +52,9 @@ public class ModParticleFactory implements ParticleFactory<SimpleParticleType> {
     @Override
     public @Nullable Particle createParticle(SimpleParticleType parameters, ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
         Particle particle = new ModParticle(world,x,y,z,velocityX,velocityY,velocityZ,spriteProvider, data.getLifeTime());
+        if(this != INSTANCE) {
+            BetterParticles.LOGGER.atError().log("严重错误！当前Factory与实例INSTANCE不符");
+        }
         if(flag){
             ModParticleManager.getInstance().autoTrack(particle);
         }else{
