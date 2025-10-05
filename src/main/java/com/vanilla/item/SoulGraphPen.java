@@ -5,6 +5,7 @@ import com.vanilla.function.CreateCircle;
 import com.vanilla.function.CreateInter;
 import com.vanilla.function.CreateLine;
 import com.vanilla.function.CreateSingleParticle;
+import com.vanilla.util.PlayerHandler;
 import com.vanilla.util.PointListener;
 import com.vanilla.util.SendMessageToPlayer;
 import net.minecraft.entity.player.PlayerEntity;
@@ -80,7 +81,7 @@ public class SoulGraphPen extends Item {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack stack = user.getStackInHand(hand);
         if (world.isClient) {
-            Vec3d pos = user.getEyePos().add(user.getRotationVec(1).multiply(2));
+            Vec3d pos = PlayerHandler.getPlayerEyePosition(user);
             switch (CurrentMode) {
                 case CREATE_SINGLE_PARTICLE:
                     CreateInter single = new CreateSingleParticle(pos);

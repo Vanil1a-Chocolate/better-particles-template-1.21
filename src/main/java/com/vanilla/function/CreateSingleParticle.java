@@ -8,13 +8,11 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class CreateSingleParticle implements CreateInter{
-    private final ParticleData data = ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA;
-    private SimpleParticleType particleType = ModParticleRegister.SPARKLE_PARTICLE;
+    private ParticleData data = ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA;
     private String group = "SINGLE_";
 
-    public CreateSingleParticle(Vec3d pos, SimpleParticleType particle,String group) {
-        data.setPosition(pos);
-        particleType = particle;
+    public CreateSingleParticle(ParticleData data,String group) {
+        this.data = data;
         this.group = group;
     }
 

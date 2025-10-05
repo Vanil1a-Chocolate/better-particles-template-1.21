@@ -15,7 +15,7 @@ public class ModParticle extends SpriteBillboardParticle {
 
     private ParticleTextureSheet sheet;
     public final ParticleData data;
-
+    private String handle;
     protected ModParticle(ClientWorld clientWorld, double x, double y, double z,double vx ,double vy ,double vz,SpriteProvider sprites,int life) {
         super(clientWorld,x,y,z,vx,vy,vz);
         data = new ParticleData(new Vec3d(x,y,z),new Vec3d(vx,vy,vz),new Color(0,0,0,0));
@@ -60,6 +60,13 @@ public class ModParticle extends SpriteBillboardParticle {
             this.velocityY = data.getVelocity().getY();
             this.velocityZ = data.getVelocity().getZ();
         }
-        if (age++ >= maxAge) this.markDead();
+        if (age++ >= maxAge) {
+            this.markDead();
+            ModParticleManager.getInstance().cleanGroup(handle);
+        }
     }
+
+    public String getHandle() { return handle; }
+
+    public void setHandle(String handle) { this.handle = handle; }
 }

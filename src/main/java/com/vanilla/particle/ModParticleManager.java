@@ -39,12 +39,13 @@ public final class ModParticleManager {
         return currentHandleGenerate();
     }
 
-    public void track(String group,Particle particle){
+    public void track(String group,ModParticle particle){
+        particle.setHandle(group);
         if(!particlesHandle.contains(group)) particlesHandle.add(group);
         pool.computeIfAbsent(group, k -> new ConcurrentLinkedDeque<>()).add(particle);
     }
 
-    public void autoTrack(Particle particle){
+    public void autoTrack(ModParticle particle){
         long handle = currentHandleGenerate();
         track(String.valueOf(handle),particle);
         printCurrentSingleHandle();
@@ -61,6 +62,7 @@ public final class ModParticleManager {
     }
 
     public void cleanAllGroup(){
+        currentHandle = 0L;
         for (int i = particlesHandle.size() - 1; i >= 0; i--){
             String group  = particlesHandle.remove(i);
             cleanGroup(group);

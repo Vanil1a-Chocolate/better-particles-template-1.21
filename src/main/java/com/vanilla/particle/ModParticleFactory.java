@@ -53,7 +53,7 @@ public class ModParticleFactory implements ParticleFactory<SimpleParticleType>{
     public @Nullable Particle createParticle(SimpleParticleType parameters, ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
         if(data == null) data = ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA;
         data.setSpriteProvider(spriteProvider);
-        Particle particle = new ModParticle(world,data);
+        ModParticle particle = new ModParticle(world,data);
         if(this != INSTANCE) {
             BetterParticles.LOGGER.atError().log("严重错误！当前Factory与实例INSTANCE不符");
         }

@@ -21,7 +21,7 @@ public class ModParticleRegister {
 
     public static final ParticleData WARNING_PARTICLE_DATA = new ParticleData(Vec3d.ZERO, new Color(0,0,0,1),5000,WARING_PARTICLE,false,1, ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT);
     public static final ParticleData SIMPLE_DEFAULT_PARTICLE_DATA = new ParticleData(Vec3d.ZERO,new Color(0,0,0,1),5000,SPARKLE_PARTICLE,false,0.8f,ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT);
-    public static final ParticleData PREVIEW_PARTICLE_DATA = new ParticleData(Vec3d.ZERO,new Color(0f,0f,0f,0.1f),5000, PREVIEW_PARTICLE,false,0.8f,ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT);
+    public static final ParticleData PREVIEW_PARTICLE_DATA = new ParticleData(Vec3d.ZERO,new Color(0f,0f,0f,0.05f),1, PREVIEW_PARTICLE,false,0.3f,ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT);
 
 
     public static void initParticles(){

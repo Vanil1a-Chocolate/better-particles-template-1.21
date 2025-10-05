@@ -1,6 +1,7 @@
 package com.vanilla;
 
 import com.vanilla.command.ModCommand;
+import com.vanilla.function.CreatePreviewOnTick;
 import com.vanilla.item.ModItems;
 import com.vanilla.item.SoulGraphPen;
 import com.vanilla.particle.ModParticleRegister;
@@ -20,6 +21,7 @@ public class BetterParticlesClient implements ClientModInitializer {
         public void onInitializeClient() {
             ModParticleRegister.initParticles();
             ModCommand.initCommand();
+            CreatePreviewOnTick.initPreview();
             ClientPlayConnectionEvents.JOIN.register((handler, sender, client)->{
                 int shiftKey = GLFW.GLFW_KEY_LEFT_SHIFT;
                 long window = MinecraftClient.getInstance().getWindow().getHandle();
