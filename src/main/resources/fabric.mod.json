@@ -3,13 +3,12 @@
 	"id": "better-particles",
 	"version": "${version}",
 	"name": "Better Particles",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "这是一个供玩家自由创建粒子效果的工具",
 	"authors": [
 		"Vanilla"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/Vanil1a-Chocolate/better-particles-template-1.21"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/better-particles/icon.png",

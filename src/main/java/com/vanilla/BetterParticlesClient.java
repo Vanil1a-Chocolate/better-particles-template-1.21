@@ -1,9 +1,11 @@
 package com.vanilla;
 
 import com.vanilla.command.ModCommand;
+import com.vanilla.function.CreateCircle;
 import com.vanilla.function.CreatePreviewOnTick;
 import com.vanilla.item.ModItems;
 import com.vanilla.item.SoulGraphPen;
+import com.vanilla.key.KeyBindingUtil;
 import com.vanilla.particle.ModParticleRegister;
 import com.vanilla.util.MouseScrollEvent;
 import net.fabricmc.api.ClientModInitializer;
@@ -22,6 +24,7 @@ public class BetterParticlesClient implements ClientModInitializer {
             ModParticleRegister.initParticles();
             ModCommand.initCommand();
             CreatePreviewOnTick.initPreview();
+            KeyBindingUtil.initKeyBindings();
             ClientPlayConnectionEvents.JOIN.register((handler, sender, client)->{
                 int shiftKey = GLFW.GLFW_KEY_LEFT_SHIFT;
                 long window = MinecraftClient.getInstance().getWindow().getHandle();
@@ -30,7 +33,18 @@ public class BetterParticlesClient implements ClientModInitializer {
                     assert player != null;
                     System.out.println(player.getMainHandStack().getItem().toString());
                     if(!player.getMainHandStack().isOf(ModItems.SOUL_GRAPH_PEN)) return false;
-                    if(!InputUtil.isKeyPressed(window, shiftKey)) return false;
+                    if(!InputUtil.isKeyPressed(window, shiftKey)) {
+                        if(SoulGraphPen.CurrentMode == SoulGraphPen.ParticleMode.CREATE_CIRCLE){
+                            if(dy==1){
+                                CreateCircle.commandPitchDeg++;
+                            }else if(dy==-1){
+                                CreateCircle.commandPitchDeg--;
+                            }
+                            return true;
+                        }else{
+                            return false;
+                        }
+                    }
                     SoulGraphPen.getInstance().changeCurrentMode((int) dy);
                     return true;
                 });

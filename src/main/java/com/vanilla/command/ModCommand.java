@@ -1,6 +1,8 @@
 package com.vanilla.command;
 
+import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.vanilla.function.CreateCircle;
 import com.vanilla.particle.ModParticleManager;
 import com.vanilla.particle.ModParticleRegister;
 import com.vanilla.util.SendMessageToPlayer;
@@ -57,6 +59,15 @@ public class ModCommand {
             manager.addParticle(ModParticleRegister.PREVIEW_PARTICLE_DATA,world);
             return 1;
         })));
+
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("setPitchDeg")
+                .then(ClientCommandManager.argument("n", DoubleArgumentType.doubleArg()).executes(context->{
+                    double deg = DoubleArgumentType.getDouble(context, "n");
+                    CreateCircle.commandPitchDeg = deg;
+                    SendMessageToPlayer.sendMessageToPlayer("设置成功!");
+                    return 1;
+                }))
+        ));
     }
 
 

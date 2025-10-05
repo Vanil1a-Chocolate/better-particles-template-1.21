@@ -12,11 +12,14 @@ import net.minecraft.util.math.Vec3d;
 
 @Environment(EnvType.CLIENT)
 public class CreatePreviewOnTick {
+    public static boolean isPreview = false;
+
     public static void initPreview(){
         ClientTickEvents.END_CLIENT_TICK.register(CreatePreviewOnTick::onTick);
     }
 
     public static void onTick(MinecraftClient client) {
+        if (!isPreview) return;
         if (client.player == null) return;
         if (!client.player.getMainHandStack().isOf(ModItems.SOUL_GRAPH_PEN)) return;
         Vec3d pos = PlayerHandler.getPlayerEyePosition(client.player);
