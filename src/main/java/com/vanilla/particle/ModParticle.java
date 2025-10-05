@@ -1,77 +1,65 @@
 package com.vanilla.particle;
 
-import com.vanilla.BetterParticles;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.client.particle.ParticleTextureSheet;
 import net.minecraft.client.particle.SpriteBillboardParticle;
 import net.minecraft.client.particle.SpriteProvider;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.particle.SimpleParticleType;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
+
+import java.awt.*;
 
 @Environment(EnvType.CLIENT)
 public class ModParticle extends SpriteBillboardParticle {
 
-    public static final SimpleParticleType SPARKLE_PARTICLE = FabricParticleTypes.simple();
-    public static final SimpleParticleType WARING_PARTICLE = FabricParticleTypes.simple();
-
-    public static void initParticles(){
-        registerParticles("magic",SPARKLE_PARTICLE);
-        registerParticles("warn",WARING_PARTICLE);
-        registerParticleFactory();
-    }
-
-    private static void registerParticles(String name,SimpleParticleType particle){
-        Registry.register(Registries.PARTICLE_TYPE, Identifier.of(BetterParticles.MOD_ID,name),particle);
-    }
-
-    private static void registerParticleFactory(){
-                ParticleFactoryRegistry.getInstance().register(SPARKLE_PARTICLE,(fabricSpriteProvider -> {
-                    ModParticleFactory factory = new ModParticleFactory(fabricSpriteProvider);
-                    ModFactoryManager.addFactory(SPARKLE_PARTICLE,factory);
-                    return factory;
-                }));
-                ParticleFactoryRegistry.getInstance().register(WARING_PARTICLE,(fabricSpriteProvider -> {
-                    ModParticleFactory factory = new ModParticleFactory(fabricSpriteProvider);
-                    ModFactoryManager.addFactory(WARING_PARTICLE,factory);
-                    return factory;
-                }));
-    }
+    private ParticleTextureSheet sheet;
+    public final ParticleData data;
 
     protected ModParticle(ClientWorld clientWorld, double x, double y, double z,double vx ,double vy ,double vz,SpriteProvider sprites,int life) {
         super(clientWorld,x,y,z,vx,vy,vz);
+        data = new ParticleData(new Vec3d(x,y,z),new Vec3d(vx,vy,vz),new Color(0,0,0,0));
+        data.setLifeTime(life);
+        data.setSpriteProvider(sprites);
         setSprite(sprites);
         this.maxAge = life;
         this.scale = 1;
+        this.alpha = data.getColor().getAlpha();
     }
 
-    protected ModParticle(ClientWorld clientWorld,double x, double y, double z,SpriteProvider sprites,int life) {
-        super(clientWorld,x,y,z);
-        setSprite(sprites);
-        this.maxAge = life;
-        this.scale = 5;
-    }
-
-    protected ModParticle(ClientWorld clientWorld,ParticleData data) {
-        this(clientWorld,data.getPosition().x,data.getPosition().y,data.getPosition().z
-        ,data.getVelocity().x,data.getVelocity().y,data.getVelocity().z, data.getSpriteProvider(), data.getLifeTime());
+    protected ModParticle(ClientWorld clientWorld,ParticleData data){
+        super(clientWorld,data.getPosition().getX(),data.getPosition().getY(),data.getPosition().getZ(),
+                data.getVelocity().getX(),data.getVelocity().getY(),data.getVelocity().getZ());
+        setSprite(data.getSpriteProvider());
+        this.data = data;
+        this.maxAge = data.getLifeTime();
+        this.scale = data.getScale();
+        this.sheet = data.getSheet();
+        this.alpha = data.getColor().getAlpha();
     }
 
     @Override
     public ParticleTextureSheet getType() {
-        return ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT;
+        if (sheet == null) {
+            return ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT;
+        }
+        return sheet;
     }
+
+
     @Override
     public void tick() {
         super.tick();
-        this.velocityX = 0;
-        this.velocityY = 0;
-        this.velocityZ = 0;
+        if(data != null&& !data.isMoved()) {
+            this.velocityX = 0;
+            this.velocityY = 0;
+            this.velocityZ = 0;
+        }
+        if (data != null) {
+            this.velocityX = data.getVelocity().getX();
+            this.velocityY = data.getVelocity().getY();
+            this.velocityZ = data.getVelocity().getZ();
+        }
         if (age++ >= maxAge) this.markDead();
     }
 }

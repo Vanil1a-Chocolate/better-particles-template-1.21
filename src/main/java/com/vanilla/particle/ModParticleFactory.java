@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class ModParticleFactory implements ParticleFactory<SimpleParticleType>{
     private final SpriteProvider spriteProvider;
-    private final ParticleData data;
+    private  ParticleData data;
 
     private boolean flag = true; //true为单步模式自动产生句柄追踪 false为多步模式
     private String handle = null;
@@ -26,32 +26,34 @@ public class ModParticleFactory implements ParticleFactory<SimpleParticleType>{
         INSTANCE = factory;
     }
 
-    public ModParticleFactory(ParticleData data, SpriteProvider spriteProvider) {
-        this.data = data;
-        this.spriteProvider = spriteProvider;
+    public static void setModeParticleFactoryEz(SimpleParticleType particle) {
+         setModeParticleFactory(ModFactoryManager.getFactory(particle));
     }
+
 
     public void reSetFlag(){
         flag = true;
     }
 
     public ModParticleFactory(SpriteProvider spriteProvide){
-        this(new ParticleData(), spriteProvide);
-
+        spriteProvider = spriteProvide;
     }
 
-    public SpriteProvider getSpriteProvider(){
-        return spriteProvider;
-    }
 
     public void setHandle(String handle){
         this.flag = false;
         this.handle = handle;
     }
 
+    public void setData(ParticleData data){
+        this.data = data;
+    }
+
     @Override
     public @Nullable Particle createParticle(SimpleParticleType parameters, ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
-        Particle particle = new ModParticle(world,x,y,z,velocityX,velocityY,velocityZ,spriteProvider, data.getLifeTime());
+        if(data == null) data = ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA;
+        data.setSpriteProvider(spriteProvider);
+        Particle particle = new ModParticle(world,data);
         if(this != INSTANCE) {
             BetterParticles.LOGGER.atError().log("严重错误！当前Factory与实例INSTANCE不符");
         }

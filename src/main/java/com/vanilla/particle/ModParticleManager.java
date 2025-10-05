@@ -47,7 +47,7 @@ public final class ModParticleManager {
     public void autoTrack(Particle particle){
         long handle = currentHandleGenerate();
         track(String.valueOf(handle),particle);
-        printCurrentHandle();
+        printCurrentSingleHandle();
     }
 
     public void cleanGroup(String group){
@@ -74,26 +74,34 @@ public final class ModParticleManager {
         return true;
     }
 
-    public void addParticle(SimpleParticleType particle, ParticleData data, World world){
+    private void addParticle(SimpleParticleType particle, ParticleData data, World world){
         Vec3d p = data.getPosition();
         Vec3d v = data.getVelocity();
+        ModParticleFactory.getInstance().setData(data);
         world.addParticle(particle,p.x,p.y,p.z,v.x,v.y,v.z);
-    }
-
-    public void addParticle(SimpleParticleType particle, ParticleData data, World world,String handle){
-        ModParticleFactory factory = ModParticleFactory.getInstance();
-        factory.setHandle(handle);
-        addParticle(particle,data,world);
-    }
-
-    public void addWarnParticle(World world,Vec3d p){
-        ModParticleFactory.setModeParticleFactory(ModFactoryManager.getFactory(ModParticle.WARING_PARTICLE));
-        String handle = "WARN_"+ currentHandleGenerate();
-        warningParticlesHandle.add(handle);
-        addParticle(ModParticle.WARING_PARTICLE,new ParticleData(p),world,handle);
         ModParticleFactory.getInstance().reSetFlag();
         ModParticleFactory.setModeParticleFactory(null);
+    }
 
+    public void addParticle( ParticleData data, World world,String handle){
+        ModParticleFactory.setModeParticleFactoryEz(data.getParticleType());
+        ModParticleFactory factory = ModParticleFactory.getInstance();
+        factory.setData(data);
+        factory.setHandle(handle);
+        addParticle(data.getParticleType(),data,world);
+    }
+
+    public void addParticle(ParticleData data, World world){
+        addParticle(data,world,null);
+    }
+
+
+
+    public void addWarnParticle(World world,Vec3d p){
+        String handle = "WARN_"+ currentHandleGenerate();
+        warningParticlesHandle.add(handle);
+        ModParticleRegister.WARNING_PARTICLE_DATA.setPosition(p);
+        addParticle(ModParticleRegister.WARNING_PARTICLE_DATA,world,handle);
     }
 
     public void cleanWarnParticle(){
@@ -105,8 +113,11 @@ public final class ModParticleManager {
 
     public void printCurrentHandle(){
         for(String group : particlesHandle){
-            System.out.println(group);
             SendMessageToPlayer.sendMessageToPlayer(group);
         }
+    }
+
+    public void printCurrentSingleHandle(){
+        SendMessageToPlayer.sendMessageToPlayer("当前自动产生句柄为:"+ currentHandle);
     }
 }

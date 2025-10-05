@@ -5,7 +5,6 @@ import com.vanilla.function.CreateCircle;
 import com.vanilla.function.CreateInter;
 import com.vanilla.function.CreateLine;
 import com.vanilla.function.CreateSingleParticle;
-import com.vanilla.particle.ModParticleManager;
 import com.vanilla.util.PointListener;
 import com.vanilla.util.SendMessageToPlayer;
 import net.minecraft.entity.player.PlayerEntity;

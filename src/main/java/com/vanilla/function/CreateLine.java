@@ -1,20 +1,19 @@
 package com.vanilla.function;
 
 import com.vanilla.obj.Point;
-import com.vanilla.particle.ModParticle;
 import com.vanilla.particle.ModParticleManager;
+import com.vanilla.particle.ModParticleRegister;
 import com.vanilla.particle.ParticleData;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-public class CreateLine extends CreateFunction {
+public class CreateLine implements CreateInter {
     private  Vec3d start;
     private  Vec3d end;
     private final ParticleData data;
     private final int precision;
 
     public CreateLine(Vec3d start, Vec3d end, ParticleData data, int precision){
-        super(data.getParticleType());
         this.start = start;
         this.end = end;
         this.data = data;
@@ -22,17 +21,16 @@ public class CreateLine extends CreateFunction {
     }
 
     public CreateLine(ParticleData data, int precision){
-        super(data.getParticleType());
         this.data = data;
         this.precision = precision;
     }
 
     public CreateLine(int precision){
-        this(new ParticleData(), precision);
+        this(ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA, precision);
     }
 
     @Override
-    protected void work(World world) {
+    public void generate(World world) {
         Point point =  Point.INSTANCE;
         if(point == null){
             return;
@@ -46,7 +44,7 @@ public class CreateLine extends CreateFunction {
             double t = (double) i / (precision - 1);
             Vec3d p = start.lerp(end, t);
             data.setPosition(p);
-            particleManager.addParticle(ModParticle.SPARKLE_PARTICLE,data,world,handle);
+            particleManager.addParticle(data,world,handle);
         }
         Point.INSTANCE = null;
     }

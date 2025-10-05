@@ -18,7 +18,6 @@ public final class PointListener {
     private static Vec3d pointB;
     private static boolean wasLeftDown;
     private static boolean wasRightDown;
-    private static boolean isReady;
 
     public static void onEnterLineMode() {
         ClientTickEvents.END_CLIENT_TICK.register(PointListener::onTick);
