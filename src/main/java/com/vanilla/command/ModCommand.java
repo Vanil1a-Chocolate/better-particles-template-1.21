@@ -3,6 +3,7 @@ package com.vanilla.command;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.vanilla.function.CreateCircle;
+import com.vanilla.function.CreateLine;
 import com.vanilla.particle.ModParticle;
 import com.vanilla.particle.ModParticleManager;
 import com.vanilla.util.ParticleVisionLocator;
@@ -66,6 +67,13 @@ public class ModCommand {
                     SendMessageToPlayer.sendMessageToPlayer("设置成功!");
                     return 1;
                 }))
+        ));
+
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("createLine")
+                .executes(commandContext -> {
+                    CreateLine.UseVisionParticleCreateLine();
+                    return 1;
+                })
         ));
     }
 

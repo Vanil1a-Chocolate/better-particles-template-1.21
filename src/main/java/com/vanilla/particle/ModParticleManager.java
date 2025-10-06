@@ -87,7 +87,6 @@ public final class ModParticleManager {
     private void addParticle(SimpleParticleType particle, ParticleData data, World world){
         Vec3d p = data.getPosition();
         Vec3d v = data.getVelocity();
-        ModParticleFactory.getInstance().setData(data);
         world.addParticle(particle,p.x,p.y,p.z,v.x,v.y,v.z);
         ModParticleFactory.getInstance().reSetFlag();
         ModParticleFactory.setModeParticleFactory(null);
@@ -135,6 +134,10 @@ public final class ModParticleManager {
 
     public void printCurrentSingleHandle(){
         SendMessageToPlayer.sendMessageToPlayer("当前自动产生句柄为:"+ currentHandle);
+    }
+
+    public List<String> getWarningParticlesHandle(){
+        return warningParticlesHandle;
     }
 
 }

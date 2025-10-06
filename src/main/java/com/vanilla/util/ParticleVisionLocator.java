@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ParticleVisionLocator {
     private static final Map<String,String> visionMap = new ConcurrentHashMap<>();
+    private static final Map<String,ModParticle> reVisionMap = new ConcurrentHashMap<>();
 
     public ModParticle getClosestParticleInSight(PlayerEntity player, double maxDistance) {
         if (player == null) return null;
@@ -69,10 +70,21 @@ public class ParticleVisionLocator {
         if( warnHandle != null ){
             ModParticleManager.getInstance().cleanWarnParticleByHandle(warnHandle);
             visionMap.remove(particle.getHandle());
+            reVisionMap.remove(warnHandle);
         }else{
             Vec3d pos = particle.data.getPosition();
             String handle = ModParticleManager.getInstance().addWarnParticle(MinecraftClient.getInstance().world, pos);
             visionMap.put(particle.getHandle(), handle);
+            reVisionMap.put(handle, particle);
         }
+    }
+
+    public static void cleanAllVisionMap(){
+        visionMap.clear();
+        reVisionMap.clear();
+    }
+
+    public static Map<String,ModParticle> getReVisionMap(){
+        return reVisionMap;
     }
 }
