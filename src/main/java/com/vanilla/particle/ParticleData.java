@@ -50,11 +50,6 @@ public class ParticleData {
         lifeTime = 5000;
     }
 
-    public ParticleData(SimpleParticleType particleType){
-        this();
-        this.particleType = particleType;
-    }
-
     public Vec3d getPosition() {
         return position;
     }
@@ -110,4 +105,17 @@ public class ParticleData {
     public ParticleTextureSheet getSheet() { return sheet; }
 
     public void setSheet(ParticleTextureSheet sheet) { this.sheet = sheet; }
+
+    public ParticleData copy() {
+        ParticleData copy = new ParticleData();
+        copy.position = this.position;
+        copy.velocity = this.velocity;
+        copy.color = this.color;
+        copy.lifeTime = this.lifeTime;
+        copy.spriteProvider = this.spriteProvider;
+        copy.scale = this.scale;
+        copy.particleType = this.particleType;
+        copy.isMoved = this.isMoved;
+        return copy;
+    }
 }

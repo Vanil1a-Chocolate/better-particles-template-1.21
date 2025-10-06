@@ -3,12 +3,11 @@ package com.vanilla.function;
 import com.vanilla.particle.ModParticleManager;
 import com.vanilla.particle.ModParticleRegister;
 import com.vanilla.particle.ParticleData;
-import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class CreateSingleParticle implements CreateInter{
-    private ParticleData data = ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA;
+    private ParticleData data = ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA.copy();
     private String group = "SINGLE_";
 
     public CreateSingleParticle(ParticleData data,String group) {

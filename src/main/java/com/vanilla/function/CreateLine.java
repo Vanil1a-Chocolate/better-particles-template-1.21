@@ -26,7 +26,7 @@ public class CreateLine implements CreateInter {
     }
 
     public CreateLine(int precision){
-        this(ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA, precision);
+        this(ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA.copy(), precision);
     }
 
     @Override

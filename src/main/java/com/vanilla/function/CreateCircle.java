@@ -20,7 +20,7 @@ public class CreateCircle implements CreateInter {
         this(radius,position,data,precision,commandPitchDeg,0);
     }
     public CreateCircle(double radius, Vec3d position, int precision) {
-        this(radius,position,ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA,precision);
+        this(radius,position,ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA.copy(),precision);
     }
 
     public CreateCircle(double radius, Vec3d position, ParticleData data,int precision, double pitchDeg, double yawDeg) {

@@ -17,7 +17,7 @@ public final class ModParticleManager {
 
     private static final ModParticleManager INSTANCE = new ModParticleManager();
 
-    private final Map<String, Queue<Particle>> pool = new ConcurrentHashMap<>();
+    private final Map<String, Queue<ModParticle>> pool = new ConcurrentHashMap<>();
 
     private final List<String> particlesHandle = new ArrayList<>();
     private final List<String> warningParticlesHandle = new ArrayList<>();
@@ -35,8 +35,16 @@ public final class ModParticleManager {
     public static ModParticleManager getInstance(){
         return INSTANCE;
     }
+
+    public List<String> getParticlesHandle(){
+        return particlesHandle;
+    }
     public long outGetCurrentHandle(){
         return currentHandleGenerate();
+    }
+
+    public Queue<ModParticle> getParticlesQueue(String handle){
+        return pool.get(handle);
     }
 
     public void track(String group,ModParticle particle){
@@ -52,7 +60,7 @@ public final class ModParticleManager {
     }
 
     public void cleanGroup(String group){
-        Queue<Particle> queue = pool.get(group);
+        Queue<ModParticle> queue = pool.get(group);
         particlesHandle.remove(group);
         if(queue == null) return;
         while(!queue.isEmpty()){
@@ -99,11 +107,12 @@ public final class ModParticleManager {
 
 
 
-    public void addWarnParticle(World world,Vec3d p){
+    public String addWarnParticle(World world, Vec3d p){
         String handle = "WARN_"+ currentHandleGenerate();
         warningParticlesHandle.add(handle);
         ModParticleRegister.WARNING_PARTICLE_DATA.setPosition(p);
         addParticle(ModParticleRegister.WARNING_PARTICLE_DATA,world,handle);
+        return handle;
     }
 
     public void cleanWarnParticle(){
@@ -111,6 +120,11 @@ public final class ModParticleManager {
             cleanGroup(handle);
         }
         warningParticlesHandle.clear();
+    }
+
+    public void cleanWarnParticleByHandle(String handle){
+        cleanGroup(handle);
+        warningParticlesHandle.remove(handle);
     }
 
     public void printCurrentHandle(){
@@ -122,4 +136,5 @@ public final class ModParticleManager {
     public void printCurrentSingleHandle(){
         SendMessageToPlayer.sendMessageToPlayer("当前自动产生句柄为:"+ currentHandle);
     }
+
 }

@@ -8,6 +8,7 @@ import com.vanilla.item.SoulGraphPen;
 import com.vanilla.key.KeyBindingUtil;
 import com.vanilla.particle.ModParticleRegister;
 import com.vanilla.util.MouseScrollEvent;
+import com.vanilla.util.PointListener;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -25,6 +26,7 @@ public class BetterParticlesClient implements ClientModInitializer {
             ModCommand.initCommand();
             CreatePreviewOnTick.initPreview();
             KeyBindingUtil.initKeyBindings();
+            PointListener.initPointListener();
             ClientPlayConnectionEvents.JOIN.register((handler, sender, client)->{
                 int shiftKey = GLFW.GLFW_KEY_LEFT_SHIFT;
                 long window = MinecraftClient.getInstance().getWindow().getHandle();

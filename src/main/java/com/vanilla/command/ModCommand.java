@@ -3,17 +3,17 @@ package com.vanilla.command;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.vanilla.function.CreateCircle;
+import com.vanilla.particle.ModParticle;
 import com.vanilla.particle.ModParticleManager;
-import com.vanilla.particle.ModParticleRegister;
+import com.vanilla.util.ParticleVisionLocator;
 import com.vanilla.util.SendMessageToPlayer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
-import net.minecraft.world.World;
 
 @Environment(EnvType.CLIENT)
 public class ModCommand {
@@ -51,12 +51,11 @@ public class ModCommand {
         ));
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("modTest").executes(context -> {
-            ModParticleManager manager = ModParticleManager.getInstance();
-            PlayerEntity player = context.getSource().getPlayer();
-            World world = player.getEntityWorld();
-            ModParticleRegister.PREVIEW_PARTICLE_DATA.setScale(0.2f);
-            ModParticleRegister.PREVIEW_PARTICLE_DATA.setPosition(player.getPos());
-            manager.addParticle(ModParticleRegister.PREVIEW_PARTICLE_DATA,world);
+            ParticleVisionLocator l = new ParticleVisionLocator();
+            ModParticle particle =  l.getClosestParticleInSight(MinecraftClient.getInstance().player,5);
+            if(particle != null){
+                SendMessageToPlayer.sendMessageToPlayer("当前面向:"+particle.getHandle());
+            }
             return 1;
         })));
 

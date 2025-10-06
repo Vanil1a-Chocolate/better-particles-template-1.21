@@ -3,6 +3,7 @@ package com.vanilla.util;
 import com.vanilla.item.ModItems;
 import com.vanilla.item.SoulGraphPen;
 import com.vanilla.obj.Point;
+import com.vanilla.particle.ModParticle;
 import com.vanilla.particle.ModParticleManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -27,8 +28,24 @@ public final class PointListener {
         wasRightDown = false;
     }
 
-    public static void onExitLineMode() {
-        SendMessageToPlayer.sendMessageToPlayer("退出绑定模式");
+    private static void onShowVisionParticle(){
+        ClientTickEvents.END_CLIENT_TICK.register(PointListener::onTickLeftClick);
+    }
+
+
+    public static void initPointListener(){
+        onShowVisionParticle();
+    }
+
+    private static void onTickLeftClick(MinecraftClient client){
+        if (client.player == null) return;
+        if (!client.player.getMainHandStack().isOf(ModItems.SOUL_GRAPH_PEN)) return;
+        if (SoulGraphPen.CurrentMode != SoulGraphPen.ParticleMode.CREATE_SINGLE_PARTICLE) return;
+        boolean nowLeft = GLFW.glfwGetMouseButton(client.getWindow().getHandle(), GLFW.GLFW_MOUSE_BUTTON_LEFT) == GLFW.GLFW_PRESS;
+        if (nowLeft && !wasLeftDown) {
+            onLeftClick();
+        }
+        wasLeftDown = nowLeft;
     }
 
     private static void onTick(MinecraftClient client) {
@@ -72,5 +89,13 @@ public final class PointListener {
 
     public static void onPointsReady(Vec3d pointA, Vec3d pointB) {
         Point.INSTANCE = new Point(pointA, pointB);
+    }
+
+    public static void onLeftClick(){
+        ParticleVisionLocator l = new ParticleVisionLocator();
+        ModParticle particle =  l.getClosestParticleInSight(MinecraftClient.getInstance().player,5);
+        if(particle != null){
+            SendMessageToPlayer.sendMessageToPlayer("当前面向:"+particle.getHandle());
+        }
     }
 }

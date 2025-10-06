@@ -49,11 +49,8 @@ public class ModParticle extends SpriteBillboardParticle {
 
     @Override
     public void tick() {
-        super.tick();
         if(data != null&& !data.isMoved()) {
-            this.velocityX = 0;
-            this.velocityY = 0;
-            this.velocityZ = 0;
+            this.setVelocity(0, 0, 0);
         }
         if (data != null) {
             this.velocityX = data.getVelocity().getX();
