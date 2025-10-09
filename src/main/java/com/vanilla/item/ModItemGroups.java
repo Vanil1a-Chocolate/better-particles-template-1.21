@@ -33,6 +33,7 @@ public class ModItemGroups {
     }
 
     public static void initModItemGroups() {
+        registerModItemGroups();
         BetterParticles.LOGGER.info("Registering Mod Item Groups");
     }
 }

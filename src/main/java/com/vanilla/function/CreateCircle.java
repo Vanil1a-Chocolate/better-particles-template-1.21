@@ -20,7 +20,7 @@ public class CreateCircle implements CreateInter {
         this(radius,position,data,precision,commandPitchDeg,0);
     }
     public CreateCircle(double radius, Vec3d position, int precision) {
-        this(radius,position,ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA.copy(),precision);
+        this(radius,position,ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA,precision);
     }
 
     public CreateCircle(double radius, Vec3d position, ParticleData data,int precision, double pitchDeg, double yawDeg) {
@@ -57,11 +57,12 @@ public class CreateCircle implements CreateInter {
         ModParticleManager particleManager = ModParticleManager.getInstance();
         String handle = "CIRCLE_"+ particleManager.outGetCurrentHandle();
         for(int i =0;i<precision;i++){
+            ParticleData data_new = data.copy();
             double t = 2*Math.PI*i/precision;
             Vec3d point = position.add(u.multiply(Math.cos(t)*radius))
                                   .add(v.multiply(Math.sin(t)*radius));
-            data.setPosition(point);
-            particleManager.addParticle(data,world,handle);
+            data_new.setPosition(point);
+            particleManager.addParticle(data_new,world,handle);
         }
     }
 }

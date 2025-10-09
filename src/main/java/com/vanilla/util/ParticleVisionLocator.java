@@ -66,6 +66,9 @@ public class ParticleVisionLocator {
     }
 
     public void addWarningParticleToVisionParticle(ModParticle particle) {
+        if(!particle.getHandle().startsWith("SINGLE_")){
+            particle.setHandle("SINGLE_"+particle.getHandle()+"_"+ModParticleManager.getInstance().outGetCurrentHandle());
+        }
         String warnHandle = visionMap.get(particle.getHandle());
         if( warnHandle != null ){
             ModParticleManager.getInstance().cleanWarnParticleByHandle(warnHandle);

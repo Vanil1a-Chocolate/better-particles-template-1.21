@@ -88,8 +88,7 @@ public class SoulGraphPen extends Item {
                     single.generate(world);
                     break;
                 case CREATE_LINE:
-                    CreateInter line = new CreateLine(50);
-                    line.generate(world);
+                    CreateLine.CreateLineAuto();
                     break;
                 case CREATE_CIRCLE:
                     CreateInter create = new CreateCircle(5,user.getPos(),60);

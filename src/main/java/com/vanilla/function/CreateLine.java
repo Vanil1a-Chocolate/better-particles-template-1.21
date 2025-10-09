@@ -17,7 +17,6 @@ public class CreateLine implements CreateInter {
     private final ParticleData data;
     private final int precision;
     private static boolean isVisible = false;
-
     public CreateLine(Vec3d start, Vec3d end, ParticleData data, int precision){
         Point.INSTANCE = new Point(start,end);
         this.data = data;
@@ -33,6 +32,23 @@ public class CreateLine implements CreateInter {
         this(ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA.copy(), precision);
     }
 
+    public static void CreateLineAuto(ParticleData data){
+        Point point = Point.INSTANCE;
+        if (point == null) return;
+        double dist = point.getStart().distanceTo(point.getEnd());
+        CreateLine create = new CreateLine(data,(int) dist);
+        create.generate(MinecraftClient.getInstance().world);
+    }
+
+    public static void CreateLineAuto(Vec3d start,Vec3d end,ParticleData data){
+        Point.INSTANCE = new Point(start,end);
+        CreateLineAuto(data);
+    }
+
+    public static void CreateLineAuto(){
+        CreateLineAuto(ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA);
+    }
+
     public static void CreateLineEz(Vec3d start, Vec3d end, ParticleData data, int precision){
         CreateLine createLine = new CreateLine(start, end, data, precision);
         createLine.generate(MinecraftClient.getInstance().world);
@@ -42,17 +58,24 @@ public class CreateLine implements CreateInter {
         CreateLineEz(start,end,ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA.copy(),precision);
     }
 
-    public static void UseVisionParticleCreateLine(){
+
+
+    public static void UseVisionParticleCreateLine(boolean mode){
         List<String> handle = ModParticleManager.getInstance().getWarningParticlesHandle();
         Map<String, ModParticle> reVisionMap = ParticleVisionLocator.getReVisionMap();
         isVisible = true;
         for(int i =0;i<handle.size()-1;i++){
             for(int j = i+1;j<handle.size();j++){
-                CreateLineEz(reVisionMap.get(handle.get(i)).data.getPosition(),reVisionMap.get(handle.get(j)).data.getPosition(),100);
+                if(mode){
+                    CreateLineAuto(reVisionMap.get(handle.get(i)).data.getPosition(),reVisionMap.get(handle.get(j)).data.getPosition(),ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA.copy());
+                }else{
+                    CreateLineEz(reVisionMap.get(handle.get(i)).data.getPosition(),reVisionMap.get(handle.get(j)).data.getPosition(),100);
+                }
             }
         }
         ParticleVisionLocator.cleanAllVisionMap();
         ModParticleManager.getInstance().cleanWarnParticle();
+        isVisible = false;
     }
 
     @Override

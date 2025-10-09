@@ -71,7 +71,7 @@ public class ModCommand {
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("createLine")
                 .executes(commandContext -> {
-                    CreateLine.UseVisionParticleCreateLine();
+                    CreateLine.UseVisionParticleCreateLine(true);
                     return 1;
                 })
         ));
