@@ -18,10 +18,15 @@ import net.minecraft.world.World;
 
 public class SoulGraphPen extends Item {
     public enum ParticleMode {
-        CREATE_SINGLE_PARTICLE,
-        CREATE_LINE,
-        CREATE_CIRCLE;
+        CREATE_SINGLE_PARTICLE(1),
+        CREATE_LINE(2),
+        CREATE_CIRCLE(3);
 
+
+        private final int value ;
+        ParticleMode(int i){
+            value = i;
+        }
 
         public ParticleMode next() {
             return values()[(this.ordinal() + 1) % values().length];
@@ -32,11 +37,15 @@ public class SoulGraphPen extends Item {
             return values()[(this.ordinal() - 1 + len) % len];
         }
 
+        public int getValue() {
+            return value;
+        }
     }
 
     public static ParticleMode CurrentMode;
     public static ParticleMode mode;
-    private static final SoulGraphPen instance = new SoulGraphPen(new Item.Settings().maxCount(1));
+    private static final SoulGraphPen instance = new SoulGraphPen(new Settings().maxCount(1));
+    public static boolean isSaved = false;
     public SoulGraphPen(Settings settings) {
         super(settings);
         mode = ParticleMode.CREATE_SINGLE_PARTICLE;

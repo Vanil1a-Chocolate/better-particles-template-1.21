@@ -1,5 +1,6 @@
 package com.vanilla.function;
 
+import com.google.gson.JsonObject;
 import com.vanilla.obj.Point;
 import com.vanilla.particle.ModParticle;
 import com.vanilla.particle.ModParticleManager;
@@ -98,5 +99,10 @@ public class CreateLine implements CreateInter {
             particleManager.addParticle(data,world,handle);
         }
         Point.INSTANCE = null;
+    }
+
+    @Override
+    public JsonObject toJson(ParticleData data) {
+        return new JsonObject();
     }
 }

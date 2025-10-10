@@ -1,20 +1,22 @@
 package com.vanilla.command;
 
+import com.google.gson.JsonObject;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.vanilla.function.CreateCircle;
 import com.vanilla.function.CreateLine;
-import com.vanilla.particle.ModParticle;
 import com.vanilla.particle.ModParticleManager;
-import com.vanilla.util.ParticleVisionLocator;
+import com.vanilla.util.ReadTextToJson;
+import com.vanilla.util.SaveJsonToText;
 import com.vanilla.util.SendMessageToPlayer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
+
+import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class ModCommand {
@@ -52,18 +54,29 @@ public class ModCommand {
         ));
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("modTest").executes(context -> {
-            ParticleVisionLocator l = new ParticleVisionLocator();
-            ModParticle particle =  l.getClosestParticleInSight(MinecraftClient.getInstance().player,5);
-            if(particle != null){
-                SendMessageToPlayer.sendMessageToPlayer("当前面向:"+particle.getHandle());
+            List<JsonObject > json =  ReadTextToJson.readTextToJson(SaveJsonToText.getRootDir());
+            for (JsonObject jsonObj : json) {
+                CreateCircle.toData(jsonObj);
             }
             return 1;
         })));
 
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("readParticles")
+                .then(ClientCommandManager.argument("n", StringArgumentType.string()).executes(context->{
+                    String str = StringArgumentType.getString(context,"n");
+                    List<JsonObject > json =  ReadTextToJson.readTextToJson(SaveJsonToText.getRootDir().resolve(str));
+                    for (JsonObject jsonObj : json) {
+                        CreateCircle.toData(jsonObj);
+                    }
+                    return 1;
+                }))
+        ));
+
+
+
         ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("setPitchDeg")
                 .then(ClientCommandManager.argument("n", DoubleArgumentType.doubleArg()).executes(context->{
-                    double deg = DoubleArgumentType.getDouble(context, "n");
-                    CreateCircle.commandPitchDeg = deg;
+                    CreateCircle.commandPitchDeg = DoubleArgumentType.getDouble(context, "n");
                     SendMessageToPlayer.sendMessageToPlayer("设置成功!");
                     return 1;
                 }))

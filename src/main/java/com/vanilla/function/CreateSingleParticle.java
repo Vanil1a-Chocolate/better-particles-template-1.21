@@ -1,5 +1,6 @@
 package com.vanilla.function;
 
+import com.google.gson.JsonObject;
 import com.vanilla.particle.ModParticleManager;
 import com.vanilla.particle.ModParticleRegister;
 import com.vanilla.particle.ParticleData;
@@ -24,5 +25,10 @@ public class CreateSingleParticle implements CreateInter{
         ModParticleManager manager = ModParticleManager.getInstance();
         String handle = group + manager.outGetCurrentHandle();
         manager.addParticle(data,world,handle);
+    }
+
+    @Override
+    public JsonObject toJson(ParticleData data) {
+        return null;
     }
 }
