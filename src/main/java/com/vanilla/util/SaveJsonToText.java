@@ -2,6 +2,8 @@ package com.vanilla.util;
 
 import com.google.gson.JsonObject;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.util.math.Vec3d;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -19,8 +21,19 @@ public final class SaveJsonToText {
     private BufferedWriter currentWriter;
     private int currentNumber;
     private Path currentFile;
+    private Vec3d startPosition;
 
     public static SaveJsonToText getInstance() { return instance; }
+
+    public Vec3d getStartPosition() { return startPosition; }
+
+    public void setStartPosition(){
+        if (MinecraftClient.getInstance().player != null) {
+            startPosition = MinecraftClient.getInstance().player.getPos();
+        }
+    }
+
+    public void resetStartPosition() { startPosition = new Vec3d(0, 0, 0); }
 
     private Path nextDataFile(Path folder) throws IOException {
         if (Files.notExists(folder)) {

@@ -54,10 +54,12 @@ public class KeyBindingUtil {
                 isSaved();
                 if(SoulGraphPen.isSaved){
                     SendMessageToPlayer.sendMessageToPlayer("开始录制");
+                    SaveJsonToText.getInstance().setStartPosition();
                 }else{
                     SendMessageToPlayer.sendMessageToPlayer("结束录制");
                     Path path =  SaveJsonToText.getInstance().close();
                     SendMessageToPlayer.sendMessageToPlayer("已保存至:"+path.toString());
+                    SaveJsonToText.getInstance().resetStartPosition();
                 }
             }
         });

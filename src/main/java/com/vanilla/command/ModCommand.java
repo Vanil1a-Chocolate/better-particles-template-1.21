@@ -56,7 +56,7 @@ public class ModCommand {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("modTest").executes(context -> {
             List<JsonObject > json =  ReadTextToJson.readTextToJson(SaveJsonToText.getRootDir());
             for (JsonObject jsonObj : json) {
-                CreateCircle.toData(jsonObj);
+                CreateCircle.INSTANCE.toData(jsonObj);
             }
             return 1;
         })));
@@ -66,7 +66,7 @@ public class ModCommand {
                     String str = StringArgumentType.getString(context,"n");
                     List<JsonObject > json =  ReadTextToJson.readTextToJson(SaveJsonToText.getRootDir().resolve(str));
                     for (JsonObject jsonObj : json) {
-                        CreateCircle.toData(jsonObj);
+                       ReadTextToJson.UseJsonToCreate(jsonObj);
                     }
                     return 1;
                 }))

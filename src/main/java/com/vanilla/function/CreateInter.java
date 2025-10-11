@@ -7,4 +7,5 @@ import net.minecraft.world.World;
 public interface CreateInter {
     void generate(World world);
     JsonObject toJson(ParticleData data);
+    void toData(JsonObject json);
 }

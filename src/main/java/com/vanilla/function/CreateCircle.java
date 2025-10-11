@@ -1,12 +1,13 @@
 package com.vanilla.function;
 
 import com.google.gson.JsonObject;
-import com.vanilla.BetterParticles;
 import com.vanilla.item.SoulGraphPen;
 import com.vanilla.particle.ModParticleManager;
 import com.vanilla.particle.ModParticleRegister;
 import com.vanilla.particle.ParticleData;
+import com.vanilla.util.DistanceHelper;
 import com.vanilla.util.JsonHelper;
+import com.vanilla.util.ReadTextToJson;
 import com.vanilla.util.SaveJsonToText;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.Vec3d;
@@ -21,6 +22,7 @@ public class CreateCircle implements CreateInter {
     private  final double yawDeg;
     public static double commandPitchDeg = 90;
 
+    public static final CreateCircle INSTANCE = new CreateCircle(0,Vec3d.ZERO,0);
 
     public CreateCircle(double radius, Vec3d position, ParticleData data, int precision) {
         this(radius,position,data,precision,commandPitchDeg,0);
@@ -81,28 +83,28 @@ public class CreateCircle implements CreateInter {
     @Override
     public JsonObject toJson(ParticleData data){
         JsonObject json = new JsonObject();
-        JsonObject pos = new JsonObject();
+
+        Vec3d nPos = DistanceHelper.getDistanceFromTwoVec3d(SaveJsonToText.getInstance().getStartPosition(),position);
         json.addProperty("mode", SoulGraphPen.ParticleMode.CREATE_CIRCLE.getValue());
         json.addProperty("radius", radius);
         json.addProperty("precision", precision);
         json.addProperty("pitchDeg", pitchDeg);
         json.addProperty("yawDeg", yawDeg);
-        pos.addProperty("x", position.x);
-        pos.addProperty("y", position.y);
-        pos.addProperty("z", position.z);
+        JsonObject pos = JsonHelper.UseVec3dToJson(nPos);
         json.add("position", pos);
         json.add("data",ParticleData.DataToJson(data));
         return json;
     }
 
-    public static void toData(JsonObject json){
+    @Override
+    public void toData(JsonObject json){
         int precision = json.get("precision").getAsInt();
         double radius = json.get("radius").getAsDouble();
         double pitchDeg = json.get("pitchDeg").getAsDouble();
         double yawDeg = json.get("yawDeg").getAsDouble();
         Vec3d pos = JsonHelper.getVec3dFromJsonEz(json);
-
-        CreateCircle createCircle = new CreateCircle(radius,pos,ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA,precision,pitchDeg,yawDeg);
+        Vec3d CurrentPos = DistanceHelper.getDistanceFromTwoVec3d(ReadTextToJson.getStartPos(),pos);
+        CreateCircle createCircle = new CreateCircle(radius,CurrentPos,ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA.copy(),precision,pitchDeg,yawDeg);
         createCircle.generate(MinecraftClient.getInstance().world);
     }
 }
