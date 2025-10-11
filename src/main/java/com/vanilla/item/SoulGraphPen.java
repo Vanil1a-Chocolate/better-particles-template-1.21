@@ -97,11 +97,18 @@ public class SoulGraphPen extends Item {
                     single.generate(world);
                     break;
                 case CREATE_LINE:
-                    CreateLine.CreateLineAuto();
+                    CreateLine createLine = new CreateLine(50);
+                    createLine.generate(world);
                     break;
                 case CREATE_CIRCLE:
-                    CreateInter create = new CreateCircle(5,user.getPos(),60);
-                    create.generate(world);
+                    if(CreateCircle.CommandCreateCircleData != null){
+                        CreateCircle create =  CreateCircle.INSTANCE.UseCommandCreateCircleData(user.getPos());
+                        create.generate(world);
+                        CreateCircle.CommandCreateCircleData = null;
+                    }else{
+                        CreateInter create = new CreateCircle(5,user.getPos(),60);
+                        create.generate(world);
+                    }
                     break;
             }
 

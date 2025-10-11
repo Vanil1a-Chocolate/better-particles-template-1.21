@@ -24,11 +24,17 @@ public class CreateCircle implements CreateInter {
 
     public static final CreateCircle INSTANCE = new CreateCircle(0,Vec3d.ZERO,0);
 
+    public static CreateCircle CommandCreateCircleData;
+
     public CreateCircle(double radius, Vec3d position, ParticleData data, int precision) {
         this(radius,position,data,precision,commandPitchDeg,0);
     }
     public CreateCircle(double radius, Vec3d position, int precision) {
         this(radius,position,ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA,precision);
+    }
+
+    public CreateCircle UseCommandCreateCircleData(Vec3d pos){
+        return new CreateCircle(CommandCreateCircleData.radius,pos,CommandCreateCircleData.precision);
     }
 
     public CreateCircle(double radius, Vec3d position, ParticleData data,int precision, double pitchDeg, double yawDeg) {

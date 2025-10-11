@@ -2,6 +2,7 @@ package com.vanilla.command;
 
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.vanilla.function.CreateCircle;
 import com.vanilla.function.CreateLine;
@@ -15,6 +16,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
 
@@ -80,6 +82,18 @@ public class ModCommand {
                     SendMessageToPlayer.sendMessageToPlayer("设置成功!");
                     return 1;
                 }))
+        ));
+
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("setCircle")
+                .then(ClientCommandManager.argument("radius", DoubleArgumentType.doubleArg())
+                .then(ClientCommandManager.argument("precision", IntegerArgumentType.integer())
+                .executes(context->{
+                    double radius= DoubleArgumentType.getDouble(context, "radius");
+                    int precision = IntegerArgumentType.getInteger(context, "precision");
+                    CreateCircle.CommandCreateCircleData = new CreateCircle(radius, Vec3d.ZERO,precision);
+                    SendMessageToPlayer.sendMessageToPlayer("设置成功!");
+                    return 1;
+                })))
         ));
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("createLine")
