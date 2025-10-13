@@ -5,22 +5,20 @@ import com.vanilla.item.SoulGraphPen;
 import com.vanilla.particle.ModParticleManager;
 import com.vanilla.particle.ModParticleRegister;
 import com.vanilla.particle.ParticleData;
-import com.vanilla.util.DistanceHelper;
-import com.vanilla.util.JsonHelper;
-import com.vanilla.util.ReadTextToJson;
-import com.vanilla.util.SaveJsonToText;
+import com.vanilla.util.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class CreateCircle implements CreateInter {
     private final double radius;
-    private final Vec3d position;
+    private Vec3d position;
     private final ParticleData data;
     private final int precision;
     private  final double pitchDeg ;
     private  final double yawDeg;
     public static double commandPitchDeg = 90;
+    public static double angle_v = 0.5;
 
     public static final CreateCircle INSTANCE = new CreateCircle(0,Vec3d.ZERO,0);
 
@@ -47,6 +45,9 @@ public class CreateCircle implements CreateInter {
     }
     @Override
     public void generate(World world) {
+        if(UseCommandData.position!=null){
+            position = UseCommandData.position;
+        }
         double pitch = Math.toRadians(pitchDeg);
         double yaw = Math.toRadians(yawDeg);
 
@@ -78,12 +79,28 @@ public class CreateCircle implements CreateInter {
         }
         for(int i =0;i<precision;i++){
             ParticleData data_new = data.copy();
+            if(UseCommandData.isMoved){
+                data_new.setMove(()->{
+                    Vec3d vec =  data_new.getPosition();
+                    double angle = Math.atan2(vec.z - position.z, vec.x - position.x);
+                    angle += angle_v;
+                    double var_1 = position.x + radius * Math.cos(angle);
+                    double var_2 = vec.y;
+                    double var_3 = position.z + radius * Math.sin(angle);
+                    Vec3d new_vec  = new Vec3d(var_1, var_2, var_3);
+                    data_new.setPosition(new_vec);
+                    return new_vec;
+                });
+            }
             double t = 2*Math.PI*i/precision;
             Vec3d point = position.add(u.multiply(Math.cos(t)*radius))
                                   .add(v.multiply(Math.sin(t)*radius));
             data_new.setPosition(point);
             particleManager.addParticle(data_new,world,handle);
         }
+        ParticleData data_new = ModParticleRegister.TRANSPARENT_PARTICLE_DATA.copy();
+        data_new.setPosition(position);
+        particleManager.addParticle(data_new,world,handle+"_CENTER");
     }
 
     @Override
@@ -96,6 +113,7 @@ public class CreateCircle implements CreateInter {
         json.addProperty("precision", precision);
         json.addProperty("pitchDeg", pitchDeg);
         json.addProperty("yawDeg", yawDeg);
+        json.addProperty("angle",angle_v);
         JsonObject pos = JsonHelper.UseVec3dToJson(nPos);
         json.add("position", pos);
         json.add("data",ParticleData.DataToJson(data));

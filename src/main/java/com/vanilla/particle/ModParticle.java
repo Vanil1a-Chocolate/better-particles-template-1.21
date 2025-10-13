@@ -4,28 +4,16 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.particle.ParticleTextureSheet;
 import net.minecraft.client.particle.SpriteBillboardParticle;
-import net.minecraft.client.particle.SpriteProvider;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.Vec3d;
-
-import java.awt.*;
 
 @Environment(EnvType.CLIENT)
 public class ModParticle extends SpriteBillboardParticle {
 
-    private ParticleTextureSheet sheet;
+    private final ParticleTextureSheet sheet;
     public final ParticleData data;
     private String handle;
-    protected ModParticle(ClientWorld clientWorld, double x, double y, double z,double vx ,double vy ,double vz,SpriteProvider sprites,int life) {
-        super(clientWorld,x,y,z,vx,vy,vz);
-        data = new ParticleData(new Vec3d(x,y,z),new Vec3d(vx,vy,vz),new Color(0,0,0,0));
-        data.setLifeTime(life);
-        data.setSpriteProvider(sprites);
-        setSprite(sprites);
-        this.maxAge = life;
-        this.scale = 1;
-        this.alpha = data.getColor().getAlpha();
-    }
+    private final ModParticleMove move;
 
     protected ModParticle(ClientWorld clientWorld,ParticleData data){
         super(clientWorld,data.getPosition().getX(),data.getPosition().getY(),data.getPosition().getZ(),
@@ -36,6 +24,7 @@ public class ModParticle extends SpriteBillboardParticle {
         this.scale = data.getScale();
         this.sheet = data.getSheet();
         this.alpha = data.getColor().getAlpha();
+        this.move = data.getMove();
     }
 
     @Override
@@ -49,6 +38,10 @@ public class ModParticle extends SpriteBillboardParticle {
 
     @Override
     public void tick() {
+        if(move != null) {
+            Vec3d vec= move.tickMove();
+            setPos(vec.x, vec.y, vec.z);
+        }
         if(data != null&& !data.isMoved()) {
             this.setVelocity(0, 0, 0);
         }
@@ -57,6 +50,7 @@ public class ModParticle extends SpriteBillboardParticle {
             this.velocityY = data.getVelocity().getY();
             this.velocityZ = data.getVelocity().getZ();
         }
+        super.tick();
         if (age++ >= maxAge) {
             this.markDead();
             ModParticleManager.getInstance().cleanGroup(handle);

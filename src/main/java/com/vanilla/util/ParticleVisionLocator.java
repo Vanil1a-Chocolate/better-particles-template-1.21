@@ -1,5 +1,6 @@
 package com.vanilla.util;
 
+import com.vanilla.item.SoulGraphPen;
 import com.vanilla.particle.ModParticle;
 import com.vanilla.particle.ModParticleManager;
 import com.vanilla.particle.ModParticleRegister;
@@ -9,6 +10,7 @@ import net.minecraft.util.math.Vec3d;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,7 +18,7 @@ public class ParticleVisionLocator {
     private static final Map<String,String> visionMap = new ConcurrentHashMap<>();
     private static final Map<String,ModParticle> reVisionMap = new ConcurrentHashMap<>();
 
-    public ModParticle getClosestParticleInSight(PlayerEntity player, double maxDistance) {
+    public ModParticle getClosestParticleInSight(PlayerEntity player, double maxDistance, SoulGraphPen.ParticleMode mode) {
         if (player == null) return null;
 
         Vec3d eyePos = player.getEyePos();
@@ -47,7 +49,13 @@ public class ParticleVisionLocator {
             }
         }
         if (closestParticle != null) {
-            addWarningParticleToVisionParticle(closestParticle);
+            if(mode == SoulGraphPen.ParticleMode.CREATE_SINGLE_PARTICLE){
+                addWarningParticleToVisionParticle(closestParticle);
+            }else if (mode ==SoulGraphPen.ParticleMode.CREATE_CIRCLE){
+                if (closestParticle.getHandle().startsWith("CIRCLE_")) {
+                    addWarningParticleToVisionParticle(Objects.requireNonNull(ModParticleManager.getInstance().getParticlesQueue(closestParticle.getHandle() + "_CENTER").peek()));
+                }
+            }
         }
         return closestParticle;
     }

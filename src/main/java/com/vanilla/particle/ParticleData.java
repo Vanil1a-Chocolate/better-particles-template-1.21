@@ -17,15 +17,8 @@ public class ParticleData {
     private boolean isMoved;
     private float scale;
     private ParticleTextureSheet sheet;
-
+    private ModParticleMove move;
     private SpriteProvider spriteProvider;
-
-    public ParticleData(Vec3d position, Vec3d velocity, Color color) {
-        this.position = position;
-        this.velocity = velocity;
-        this.color = color;
-    }
-
     public ParticleData(Vec3d velocity, Color color, int lifeTime, SimpleParticleType particleType, boolean isMoved, float scale,ParticleTextureSheet sheet) {
         this.velocity = velocity;
         this.color = color;
@@ -42,13 +35,6 @@ public class ParticleData {
         velocity = new Vec3d(0,0,0);
         color = new Color(0,0,0,0);
         particleType  = ModParticleRegister.SPARKLE_PARTICLE;
-    }
-
-    public ParticleData(Vec3d position){
-        this.position = position;
-        velocity = new Vec3d(0,0,0);
-        color = new Color(0,0,0,0);
-        lifeTime = 5000;
     }
 
     public static JsonObject DataToJson(ParticleData data) {
@@ -77,16 +63,16 @@ public class ParticleData {
         return velocity;
     }
 
-    public void setVelocity(Vec3d velocity) {
-        this.velocity = velocity;
+    public void setMove(ModParticleMove move) {
+        this.move = move;
+    }
+
+    public ModParticleMove getMove() {
+        return move;
     }
 
     public Color getColor() {
         return color;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
     }
 
     public SpriteProvider getSpriteProvider() {
@@ -101,25 +87,13 @@ public class ParticleData {
         return lifeTime;
     }
 
-    public void setLifeTime(int lifeTime) {
-        this.lifeTime = lifeTime;
-    }
-
     public SimpleParticleType getParticleType() { return particleType; }
-
-    public void setParticleType(SimpleParticleType particleType) { this.particleType = particleType; }
 
     public boolean isMoved() { return isMoved; }
 
-    public void setMoved(boolean isMoved) { this.isMoved = isMoved; }
-
     public float getScale() { return scale; }
 
-    public void setScale(float scale) { this.scale = scale; }
-
     public ParticleTextureSheet getSheet() { return sheet; }
-
-    public void setSheet(ParticleTextureSheet sheet) { this.sheet = sheet; }
 
     public ParticleData copy() {
         ParticleData copy = new ParticleData();

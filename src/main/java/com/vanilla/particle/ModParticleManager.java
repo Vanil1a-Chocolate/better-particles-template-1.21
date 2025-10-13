@@ -100,11 +100,6 @@ public final class ModParticleManager {
         addParticle(data.getParticleType(),data,world);
     }
 
-    public void addParticle(ParticleData data, World world){
-        addParticle(data,world,null);
-    }
-
-
 
     public String addWarnParticle(World world, Vec3d p){
         String handle = "WARN_"+ currentHandleGenerate();

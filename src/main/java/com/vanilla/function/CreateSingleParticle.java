@@ -26,6 +26,10 @@ public class CreateSingleParticle implements CreateInter{
 
     public CreateSingleParticle(Vec3d pos) {
         data.setPosition(pos);
+        data.setMove(() -> {
+            data.setPosition(data.getPosition().add(0.05, 0, 0));
+            return data.getPosition();
+        });
     }
 
     @Override

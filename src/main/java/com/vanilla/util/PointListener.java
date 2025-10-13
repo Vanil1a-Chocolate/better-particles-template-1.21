@@ -40,7 +40,7 @@ public final class PointListener {
     private static void onTickLeftClick(MinecraftClient client){
         if (client.player == null) return;
         if (!client.player.getMainHandStack().isOf(ModItems.SOUL_GRAPH_PEN)) return;
-        if (SoulGraphPen.CurrentMode != SoulGraphPen.ParticleMode.CREATE_SINGLE_PARTICLE) return;
+        if (SoulGraphPen.CurrentMode == SoulGraphPen.ParticleMode.CREATE_LINE) return;
         boolean nowLeft = GLFW.glfwGetMouseButton(client.getWindow().getHandle(), GLFW.GLFW_MOUSE_BUTTON_LEFT) == GLFW.GLFW_PRESS;
         if (nowLeft && !wasLeftDown) {
             onLeftClick();
@@ -93,7 +93,7 @@ public final class PointListener {
 
     public static void onLeftClick(){
         ParticleVisionLocator l = new ParticleVisionLocator();
-        ModParticle particle =  l.getClosestParticleInSight(MinecraftClient.getInstance().player,5);
+        ModParticle particle =  l.getClosestParticleInSight(MinecraftClient.getInstance().player,5,SoulGraphPen.CurrentMode);
         if(particle != null){
             SendMessageToPlayer.sendMessageToPlayer("当前面向:"+particle.getHandle());
         }

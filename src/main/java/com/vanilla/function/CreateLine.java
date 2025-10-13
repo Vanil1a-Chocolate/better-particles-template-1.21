@@ -50,9 +50,6 @@ public class CreateLine implements CreateInter {
         CreateLineAuto(data);
     }
 
-    public static void CreateLineAuto(){
-        CreateLineAuto(ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA);
-    }
 
     public static void CreateLineEz(Vec3d start, Vec3d end, ParticleData data, int precision){
         CreateLine createLine = new CreateLine(start, end, data, precision);

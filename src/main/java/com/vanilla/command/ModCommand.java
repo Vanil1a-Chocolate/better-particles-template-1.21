@@ -1,6 +1,7 @@
 package com.vanilla.command;
 
 import com.google.gson.JsonObject;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -10,6 +11,7 @@ import com.vanilla.particle.ModParticleManager;
 import com.vanilla.util.ReadTextToJson;
 import com.vanilla.util.SaveJsonToText;
 import com.vanilla.util.SendMessageToPlayer;
+import com.vanilla.util.UseCommandData;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
@@ -101,6 +103,22 @@ public class ModCommand {
                     CreateLine.UseVisionParticleCreateLine(true);
                     return 1;
                 })
+        ));
+
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("setPosition")
+                .executes(commandContext -> {
+                    UseCommandData.getPositionFromPicked();
+                    return 1;
+                })
+        ));
+
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("setIsMoved")
+                .then(ClientCommandManager.argument("isMoved", BoolArgumentType.bool())
+                                .executes(context->{
+                                    UseCommandData.isMoved = BoolArgumentType.getBool(context, "isMoved");
+                                    SendMessageToPlayer.sendMessageToPlayer("设置成功!");
+                                    return 1;
+                                }))
         ));
     }
 
