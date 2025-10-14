@@ -9,6 +9,7 @@ import java.util.List;
 public class UseCommandData {
     public static Vec3d position;
     public static boolean isMoved = false;
+    public static boolean changeSprite = false;
 
     public static void getPositionFromPicked(){
         List<String> handle = ModParticleManager.getInstance().getWarningParticlesHandle();

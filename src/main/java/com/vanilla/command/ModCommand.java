@@ -5,13 +5,11 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.vanilla.atlas.AtlasGenerator;
 import com.vanilla.function.CreateCircle;
 import com.vanilla.function.CreateLine;
 import com.vanilla.particle.ModParticleManager;
-import com.vanilla.util.ReadTextToJson;
-import com.vanilla.util.SaveJsonToText;
-import com.vanilla.util.SendMessageToPlayer;
-import com.vanilla.util.UseCommandData;
+import com.vanilla.util.*;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
@@ -26,6 +24,17 @@ import java.util.List;
 public class ModCommand {
 
     public static void initCommand() {
+
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("modTest").executes(context -> {
+            UseCommandData.changeSprite = !UseCommandData.changeSprite;
+            return 1;
+        })));
+
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("modTest2").executes(context -> {
+            AtlasGenerator.generate(128);
+            return 1;
+        })));
+
         ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("cleanParticles").executes(context -> {
             ModParticleManager.getInstance().cleanAllGroup();
             context.getSource().sendFeedback(Text.literal("已经清除全部粒子"));
@@ -56,14 +65,6 @@ public class ModCommand {
                     return 1;
                 }))
         ));
-
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("modTest").executes(context -> {
-            List<JsonObject > json =  ReadTextToJson.readTextToJson(SaveJsonToText.getRootDir());
-            for (JsonObject jsonObj : json) {
-                CreateCircle.INSTANCE.toData(jsonObj);
-            }
-            return 1;
-        })));
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("readParticles")
                 .then(ClientCommandManager.argument("n", StringArgumentType.string()).executes(context->{
@@ -104,7 +105,6 @@ public class ModCommand {
                     return 1;
                 })
         ));
-
         ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("setPosition")
                 .executes(commandContext -> {
                     UseCommandData.getPositionFromPicked();

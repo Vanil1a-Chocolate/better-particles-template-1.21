@@ -5,10 +5,7 @@ import com.vanilla.item.SoulGraphPen;
 import com.vanilla.particle.ModParticleManager;
 import com.vanilla.particle.ModParticleRegister;
 import com.vanilla.particle.ParticleData;
-import com.vanilla.util.DistanceHelper;
-import com.vanilla.util.JsonHelper;
-import com.vanilla.util.ReadTextToJson;
-import com.vanilla.util.SaveJsonToText;
+import com.vanilla.util.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -26,10 +23,12 @@ public class CreateSingleParticle implements CreateInter{
 
     public CreateSingleParticle(Vec3d pos) {
         data.setPosition(pos);
-        data.setMove(() -> {
-            data.setPosition(data.getPosition().add(0.05, 0, 0));
-            return data.getPosition();
-        });
+        if(UseCommandData.isMoved){
+            data.setMove(() -> {
+                data.setPosition(data.getPosition().add(0.05, 0, 0));
+                return data.getPosition();
+            });
+        }
     }
 
     @Override

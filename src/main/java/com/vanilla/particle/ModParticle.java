@@ -1,11 +1,16 @@
 package com.vanilla.particle;
 
+import com.vanilla.atlas.CustomTextureLoader;
+import com.vanilla.util.UseCommandData;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.particle.ParticleTextureSheet;
 import net.minecraft.client.particle.SpriteBillboardParticle;
+import net.minecraft.client.particle.SpriteProvider;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.Vec3d;
+
+import java.io.IOException;
 
 @Environment(EnvType.CLIENT)
 public class ModParticle extends SpriteBillboardParticle {
@@ -19,6 +24,17 @@ public class ModParticle extends SpriteBillboardParticle {
         super(clientWorld,data.getPosition().getX(),data.getPosition().getY(),data.getPosition().getZ(),
                 data.getVelocity().getX(),data.getVelocity().getY(),data.getVelocity().getZ());
         setSprite(data.getSpriteProvider());
+        SpriteProvider sp;
+        try {
+            if(UseCommandData.changeSprite){
+                sp = CustomTextureLoader.loadFromLocalFile("colored_particle");
+            }else{
+                sp =  CustomTextureLoader.loadFromLocalFile("try");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        setSprite(sp);
         this.data = data;
         this.maxAge = data.getLifeTime();
         this.scale = data.getScale();
