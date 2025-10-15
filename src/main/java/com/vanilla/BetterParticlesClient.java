@@ -8,7 +8,7 @@ import com.vanilla.item.ModItems;
 import com.vanilla.item.SoulGraphPen;
 import com.vanilla.key.KeyBindingUtil;
 import com.vanilla.particle.ModParticleRegister;
-import com.vanilla.test.AtlasHudOverlay;
+import com.vanilla.gui.AtlasHudOverlay;
 import com.vanilla.util.MouseScrollEvent;
 import com.vanilla.util.PointListener;
 import net.fabricmc.api.ClientModInitializer;

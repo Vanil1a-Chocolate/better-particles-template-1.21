@@ -97,6 +97,7 @@ public class ParticleData {
 
     public ParticleData copy() {
         ParticleData copy = new ParticleData();
+        copy.sheet = this.sheet;
         copy.position = this.position;
         copy.velocity = this.velocity;
         copy.color = this.color;

@@ -1,8 +1,8 @@
-package com.vanilla.test;
+package com.vanilla.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.vanilla.BetterParticles;
-import com.vanilla.atlas.AtlasSpriteManager;
+import com.vanilla.item.SoulGraphPen;
+import com.vanilla.util.UseCommandData;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -18,11 +18,11 @@ public class AtlasHudOverlay implements HudRenderCallback {
     @Override
     public void onHudRender(DrawContext drawContext, RenderTickCounter renderTickCounter) {
         MinecraftClient client = MinecraftClient.getInstance();
-        testSprite = AtlasSpriteManager.getInstance().getSprite(Identifier.of(BetterParticles.MOD_ID,"preview.png"));
-        if (client.world == null || testSprite == null) {
-            return; // 确保 Sprite 已初始化
-        }
 
+        testSprite = UseCommandData.getSprite();
+        if (client.player != null && (client.world == null || testSprite == null|| !client.player.getMainHandStack().isOf(SoulGraphPen.getInstance()))) {
+            return;
+        }
         Identifier atlasId = testSprite.getAtlasId();
         int spriteWidth = testSprite.getContents().getWidth();
         int spriteHeight = testSprite.getContents().getHeight();

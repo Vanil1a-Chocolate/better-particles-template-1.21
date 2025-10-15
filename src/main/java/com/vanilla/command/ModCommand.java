@@ -20,6 +20,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Environment(EnvType.CLIENT)
@@ -44,7 +45,28 @@ public class ModCommand {
                     return 1;
                 }))
         ));
-
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("changeParticle")
+                .then(ClientCommandManager.argument("name", StringArgumentType.string())
+                        .suggests((context, builder) ->{
+                            List<String> suggestions = new ArrayList<>();
+                            suggestions.add("default");
+                            suggestions.addAll(AtlasSpriteManager.getInstance().getAllIds());
+                            for (String s : suggestions) {
+                                builder.suggest(s);
+                            }
+                            return builder.buildFuture();
+                        })
+                        .executes(context->{
+                    String name = StringArgumentType.getString(context, "name");
+                    if (name.equals("default")) {
+                        UseCommandData.changeSprite = false;
+                        return 1;
+                    }
+                    UseCommandData.changeSprite = true;
+                    UseCommandData.changeSprite(name);
+                    return 1;
+                }))
+        ));
         ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("showParticleTexture").executes(context -> {
             List<String> ids = AtlasSpriteManager.getInstance().getAllIds();
             for (String id : ids) {

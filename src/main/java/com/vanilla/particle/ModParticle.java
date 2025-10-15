@@ -1,7 +1,6 @@
 package com.vanilla.particle;
 
 import com.vanilla.BetterParticles;
-import com.vanilla.atlas.AtlasSpriteManager;
 import com.vanilla.atlas.ModParticleSheet;
 import com.vanilla.util.UseCommandData;
 import net.fabricmc.api.EnvType;
@@ -10,32 +9,31 @@ import net.minecraft.client.particle.ParticleTextureSheet;
 import net.minecraft.client.particle.SpriteBillboardParticle;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
 @Environment(EnvType.CLIENT)
 public class ModParticle extends SpriteBillboardParticle {
 
-    private final ParticleTextureSheet sheet;
+    private  ParticleTextureSheet sheet;
     public final ParticleData data;
     private String handle;
     private final ModParticleMove move;
     protected ModParticle(ClientWorld clientWorld,ParticleData data){
         super(clientWorld,data.getPosition().getX(),data.getPosition().getY(),data.getPosition().getZ(),
                 data.getVelocity().getX(),data.getVelocity().getY(),data.getVelocity().getZ());
-        setSprite(data.getSpriteProvider());
-
-        Sprite sp;
         if(UseCommandData.changeSprite){
-            sp = AtlasSpriteManager.getInstance().getSprite(Identifier.of(BetterParticles.MOD_ID, "preview.png"));
+            Sprite sp =  UseCommandData.getSprite();
+            if (sp!=null){
+                setSprite(sp);
+                this.sheet = ModParticleSheet.DEFAULT_PARTICLE_SHEET;
+            }
         }else{
-            sp = AtlasSpriteManager.getInstance().getSprite(Identifier.of(BetterParticles.MOD_ID, "test.png"));
+            setSprite(data.getSpriteProvider());
+            this.sheet = data.getSheet();
         }
-        setSprite(sp);
         this.data = data;
         this.maxAge = data.getLifeTime();
         this.scale = data.getScale();
-        this.sheet = data.getSheet();
         this.alpha = data.getColor().getAlpha();
         this.move = data.getMove();
     }
@@ -44,7 +42,7 @@ public class ModParticle extends SpriteBillboardParticle {
     public ParticleTextureSheet getType() {
         BetterParticles.LOGGER.info(ModParticleSheet.DEFAULT_PARTICLE_SHEET.toString());
         if (sheet == null) {
-            return ModParticleSheet.DEFAULT_PARTICLE_SHEET;
+            return ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT;
         }
         return sheet;
     }
