@@ -6,6 +6,8 @@ import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.vanilla.atlas.AtlasGenerator;
+import com.vanilla.atlas.AtlasSpriteManager;
+import com.vanilla.atlas.CustomTextureLoader;
 import com.vanilla.function.CreateCircle;
 import com.vanilla.function.CreateLine;
 import com.vanilla.particle.ModParticleManager;
@@ -31,7 +33,23 @@ public class ModCommand {
         })));
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("modTest2").executes(context -> {
-            AtlasGenerator.generate(128);
+            AtlasGenerator.generate();
+            return 1;
+        })));
+
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("loadNewParticle")
+                .then(ClientCommandManager.argument("path", StringArgumentType.string()).executes(context->{
+                    String path = StringArgumentType.getString(context, "path");
+                    CustomTextureLoader.readImageFile(path);
+                    return 1;
+                }))
+        ));
+
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("showParticleTexture").executes(context -> {
+            List<String> ids = AtlasSpriteManager.getInstance().getAllIds();
+            for (String id : ids) {
+                SendMessageToPlayer.sendMessageToPlayer(id);
+            }
             return 1;
         })));
 

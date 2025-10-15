@@ -2,6 +2,7 @@ package com.vanilla.atlas;
 
 import com.vanilla.BetterParticles;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.util.Identifier;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -10,30 +11,37 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class AtlasGenerator {
+    private static final int MaxWidth = 128;
     private static List<File> getParticleTextureFiles() {
         Path imageDir = MinecraftClient.getInstance().runDirectory.toPath()
                 .resolve("assets")
                 .resolve(BetterParticles.MOD_ID)
                 .resolve("textures")
                 .resolve("particle");
-        try {
-            if (Files.exists(imageDir) && Files.isDirectory(imageDir)) {
-                return Files.list(imageDir)
+        if (Files.exists(imageDir) && Files.isDirectory(imageDir)) {
+            try(Stream<Path> files = Files.list(imageDir)) {
+                return  files
                         .filter(Files::isRegularFile)
                         .map(Path::toFile)
                         .collect(Collectors.toList());
+            }catch (IOException e) {
+                return Collections.emptyList();
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
         return List.of();
     }
 
-    public static void generate(int maxWidth){
+    public static void generate(){
+        generate(MaxWidth);
+    }
+
+    private static void generate(int maxWidth){
         Path atlasDir = MinecraftClient.getInstance().runDirectory.toPath()
                 .resolve("assets")
                 .resolve(BetterParticles.MOD_ID)
@@ -76,6 +84,15 @@ public class AtlasGenerator {
             }
             int x = (i % cols) * tileWidth;
             int y = (i / cols) * tileHeight;
+
+            float uMin = (float) x / atlasWidth;
+            float uMax = (float) (x + tileWidth) / atlasWidth;
+            float vMin = (float) y / atlasHeight;
+            float vMax = (float) (y + tileHeight) / atlasHeight;
+            String textureName = fileList.get(i).getName();
+            Identifier textureId = Identifier.of(BetterParticles.MOD_ID, textureName);
+            SpriteMeta meta = new SpriteMeta(textureId,uMin,uMax,vMin,vMax,tileWidth,tileHeight,x,y);
+            AtlasSpriteManager.getInstance().addSpriteMeta(meta);
             g.drawImage(texture, x, y, null);
         }
         g.dispose();
@@ -85,5 +102,8 @@ public class AtlasGenerator {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        new AtlasProvider();
+        AtlasSpriteManager.getInstance().AllMetaToSprite();
     }
 }

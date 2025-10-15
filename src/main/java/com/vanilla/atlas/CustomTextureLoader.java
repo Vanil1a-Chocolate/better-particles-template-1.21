@@ -5,12 +5,7 @@ import com.google.gson.JsonObject;
 import com.vanilla.BetterParticles;
 import com.vanilla.util.SendMessageToPlayer;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.particle.SpriteProvider;
-import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.client.texture.TextureManager;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.random.Random;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -20,14 +15,13 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
 public class CustomTextureLoader {
+    private static boolean imageLoaded = false;
+    private static boolean jsonLoaded = false;
 
-    private static final Identifier PARTICLE_ATLAS_ID = Identifier.ofVanilla("textures/atlas/particles.png");
-
-    public static Identifier readImageFile(String url){
+    public static void readImageFile(String url){
         Path path = new File(url).toPath();
         Identifier id = copyImageToLocal(path);
         generateJsonToLocal(id);
-        return id;
     }
 
     private static Identifier copyImageToLocal(Path source){
@@ -54,6 +48,8 @@ public class CustomTextureLoader {
             throw new RuntimeException(e);
         }
         int dotIndex = name.lastIndexOf('.');
+        imageLoaded = true;
+        afterFinished();
         return Identifier.of(BetterParticles.MOD_ID,name.substring(0,dotIndex));
     }
 
@@ -75,6 +71,8 @@ public class CustomTextureLoader {
             throw new RuntimeException(e);
         }
         SendMessageToPlayer.sendMessageToPlayer("自动注入成功!");
+        jsonLoaded = true;
+        afterFinished();
     }
 
     private static JsonObject autoGenerateJson(Identifier id){
@@ -85,38 +83,12 @@ public class CustomTextureLoader {
         return json;
     }
 
-    public static SpriteProvider loadFromLocalFile(String name) throws IOException {
-        Identifier customTextureId = Identifier.of(
-                BetterParticles.MOD_ID,
-                name
-        );
-        return loadFromLocalFile(customTextureId);
-    }
-
-    public static SpriteProvider loadFromLocalFile( Identifier customTextureId) throws IOException {
-        MinecraftClient client = MinecraftClient.getInstance();
-        TextureManager textureManager = client.getTextureManager();
-        if (textureManager == null) {
-            throw new IllegalStateException("纹理管理器未初始化");
+    private static void afterFinished(){
+        if(jsonLoaded&&imageLoaded){
+            jsonLoaded = false;
+            imageLoaded = false;
+            AtlasGenerator.generate();
         }
-        SpriteAtlasTexture particleAtlas;
-        if (textureManager.getTexture(PARTICLE_ATLAS_ID) instanceof SpriteAtlasTexture) {
-            particleAtlas = (SpriteAtlasTexture) textureManager.getTexture(PARTICLE_ATLAS_ID);
-        } else {
-            particleAtlas = new SpriteAtlasTexture(PARTICLE_ATLAS_ID);
-            textureManager.registerTexture(PARTICLE_ATLAS_ID, particleAtlas);
-        }
-        return new SpriteProvider() {
-            @Override
-            public Sprite getSprite(int age, int maxAge) {
-                return particleAtlas.getSprite(customTextureId);
-            }
-
-            @Override
-            public Sprite getSprite(Random random) {
-                return particleAtlas.getSprite(customTextureId);
-            }
-        };
     }
 
 

@@ -1,5 +1,6 @@
 package com.vanilla;
 
+import com.vanilla.atlas.AtlasGenerator;
 import com.vanilla.command.ModCommand;
 import com.vanilla.function.CreateCircle;
 import com.vanilla.function.CreatePreviewOnTick;
@@ -7,12 +8,14 @@ import com.vanilla.item.ModItems;
 import com.vanilla.item.SoulGraphPen;
 import com.vanilla.key.KeyBindingUtil;
 import com.vanilla.particle.ModParticleRegister;
+import com.vanilla.test.AtlasHudOverlay;
 import com.vanilla.util.MouseScrollEvent;
 import com.vanilla.util.PointListener;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,7 +30,9 @@ public class BetterParticlesClient implements ClientModInitializer {
             CreatePreviewOnTick.initPreview();
             KeyBindingUtil.initKeyBindings();
             PointListener.initPointListener();
+            HudRenderCallback.EVENT.register(new AtlasHudOverlay());
             ClientPlayConnectionEvents.JOIN.register((handler, sender, client)->{
+                AtlasGenerator.generate();
                 int shiftKey = GLFW.GLFW_KEY_LEFT_SHIFT;
                 long window = MinecraftClient.getInstance().getWindow().getHandle();
                 PlayerEntity player =  MinecraftClient.getInstance().player;

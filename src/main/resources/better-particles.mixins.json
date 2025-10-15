@@ -6,7 +6,8 @@
 		"ExampleMixin"
 	],
 	"client": [
-		"MouseScrollMixin"
+		"MouseScrollMixin",
+		"ParticleManagerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

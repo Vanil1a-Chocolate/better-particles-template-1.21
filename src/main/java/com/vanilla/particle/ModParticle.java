@@ -1,16 +1,17 @@
 package com.vanilla.particle;
 
-import com.vanilla.atlas.CustomTextureLoader;
+import com.vanilla.BetterParticles;
+import com.vanilla.atlas.AtlasSpriteManager;
+import com.vanilla.atlas.ModParticleSheet;
 import com.vanilla.util.UseCommandData;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.particle.ParticleTextureSheet;
 import net.minecraft.client.particle.SpriteBillboardParticle;
-import net.minecraft.client.particle.SpriteProvider;
+import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
-
-import java.io.IOException;
 
 @Environment(EnvType.CLIENT)
 public class ModParticle extends SpriteBillboardParticle {
@@ -19,20 +20,16 @@ public class ModParticle extends SpriteBillboardParticle {
     public final ParticleData data;
     private String handle;
     private final ModParticleMove move;
-
     protected ModParticle(ClientWorld clientWorld,ParticleData data){
         super(clientWorld,data.getPosition().getX(),data.getPosition().getY(),data.getPosition().getZ(),
                 data.getVelocity().getX(),data.getVelocity().getY(),data.getVelocity().getZ());
         setSprite(data.getSpriteProvider());
-        SpriteProvider sp;
-        try {
-            if(UseCommandData.changeSprite){
-                sp = CustomTextureLoader.loadFromLocalFile("colored_particle");
-            }else{
-                sp =  CustomTextureLoader.loadFromLocalFile("try");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+
+        Sprite sp;
+        if(UseCommandData.changeSprite){
+            sp = AtlasSpriteManager.getInstance().getSprite(Identifier.of(BetterParticles.MOD_ID, "preview.png"));
+        }else{
+            sp = AtlasSpriteManager.getInstance().getSprite(Identifier.of(BetterParticles.MOD_ID, "test.png"));
         }
         setSprite(sp);
         this.data = data;
@@ -45,12 +42,12 @@ public class ModParticle extends SpriteBillboardParticle {
 
     @Override
     public ParticleTextureSheet getType() {
+        BetterParticles.LOGGER.info(ModParticleSheet.DEFAULT_PARTICLE_SHEET.toString());
         if (sheet == null) {
-            return ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT;
+            return ModParticleSheet.DEFAULT_PARTICLE_SHEET;
         }
         return sheet;
     }
-
 
     @Override
     public void tick() {
