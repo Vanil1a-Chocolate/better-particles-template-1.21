@@ -1,12 +1,13 @@
 package com.vanilla.particle;
 
-import com.vanilla.BetterParticles;
+import com.vanilla.atlas.AtlasSpriteManager;
 import com.vanilla.atlas.ModParticleSheet;
 import com.vanilla.util.UseCommandData;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.particle.ParticleTextureSheet;
 import net.minecraft.client.particle.SpriteBillboardParticle;
+import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.Vec3d;
@@ -38,13 +39,22 @@ public class ModParticle extends SpriteBillboardParticle {
         this.move = data.getMove();
     }
 
+    public void refresh(){
+        Sprite sp = AtlasSpriteManager.getInstance().getSprite(this.sprite.getContents().getId());
+        setSprite(sp);
+    }
+
     @Override
     public ParticleTextureSheet getType() {
-        BetterParticles.LOGGER.info(ModParticleSheet.DEFAULT_PARTICLE_SHEET.toString());
         if (sheet == null) {
             return ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT;
         }
         return sheet;
+    }
+
+    @Override
+    public int getBrightness(float tickDelta){
+        return LightmapTextureManager.MAX_LIGHT_COORDINATE;
     }
 
     @Override
@@ -53,13 +63,16 @@ public class ModParticle extends SpriteBillboardParticle {
             Vec3d vec= move.tickMove();
             setPos(vec.x, vec.y, vec.z);
         }
-        if(data != null&& !data.isMoved()) {
-            this.setVelocity(0, 0, 0);
-        }
-        if (data != null) {
+        if(data != null){
+            if(!data.isMoved()) {
+                this.setVelocity(0, 0, 0);
+            }
             this.velocityX = data.getVelocity().getX();
             this.velocityY = data.getVelocity().getY();
             this.velocityZ = data.getVelocity().getZ();
+            if (data.getParticleType() == ModParticleRegister.METEOR_PARTICLE) {
+                setSprite(data.getSpriteProvider().getSprite(age, maxAge));
+            }
         }
         super.tick();
         if (age++ >= maxAge) {
@@ -71,4 +84,5 @@ public class ModParticle extends SpriteBillboardParticle {
     public String getHandle() { return handle; }
 
     public void setHandle(String handle) { this.handle = handle; }
+
 }

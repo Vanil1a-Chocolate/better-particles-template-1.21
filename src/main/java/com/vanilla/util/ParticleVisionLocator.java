@@ -34,7 +34,7 @@ public class ParticleVisionLocator {
             for (ModParticle particle : particles) {
                 Vec3d particlePos = particle.data.getPosition();
 
-                if (particle.data.getParticleType() != ModParticleRegister.SPARKLE_PARTICLE) continue;
+                if (particle.data.getParticleType() != ModParticleRegister.SIMPLE_DEFAULT_PARTICLE) continue;
                 if (!isParticleInSight(eyePos, lookDir, particlePos, maxDistance)) {
                     continue;
                 }

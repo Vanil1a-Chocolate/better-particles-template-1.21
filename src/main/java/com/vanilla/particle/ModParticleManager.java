@@ -23,9 +23,10 @@ public final class ModParticleManager {
     private final List<String> warningParticlesHandle = new ArrayList<>();
 
     private long currentHandle;
-
+    private int currentParticleIndex;
     private ModParticleManager() {
         currentHandle = 0L;
+        currentParticleIndex = 0;
     }
 
     private long currentHandleGenerate(){
@@ -135,4 +136,26 @@ public final class ModParticleManager {
         return warningParticlesHandle;
     }
 
+    public ParticleData getCurrentParticleData(){
+        if(ModParticleRegister.dataList.isEmpty()) return ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA;
+        return ModParticleRegister.dataList.get(currentParticleIndex);
+    }
+
+    public void nextParticle(){
+        currentParticleIndex++;
+        if(currentParticleIndex >= ModParticleRegister.dataList.size()){
+            currentParticleIndex = 0;
+        }
+    }
+
+    public void preParticle(){
+        currentParticleIndex--;
+        if(currentParticleIndex <0){
+            currentParticleIndex = ModParticleRegister.dataList.size() - 1;
+        }
+    }
+
+    public void resetCurrentParticle(){
+        currentParticleIndex = 0;
+    }
 }

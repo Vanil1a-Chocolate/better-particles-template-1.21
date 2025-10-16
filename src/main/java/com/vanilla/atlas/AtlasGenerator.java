@@ -1,6 +1,9 @@
 package com.vanilla.atlas;
 
 import com.vanilla.BetterParticles;
+import com.vanilla.particle.ModParticle;
+import com.vanilla.particle.ModParticleManager;
+import com.vanilla.util.UseCommandData;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
 
@@ -13,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+import java.util.Queue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -105,5 +109,24 @@ public class AtlasGenerator {
 
         new AtlasProvider();
         AtlasSpriteManager.getInstance().AllMetaToSprite();
+        refresh();
+    }
+
+    public static void refresh(){
+        if(UseCommandData.changeSprite){
+            if(UseCommandData.getSprite()==null){
+                return;
+            }
+            UseCommandData.changeSprite(UseCommandData.getSprite().getContents().getId().getPath(),false);
+        }
+        ModParticleManager manager = ModParticleManager.getInstance();
+        for(String handle: manager.getParticlesHandle()){
+            Queue<ModParticle> particles = manager.getParticlesQueue(handle);
+            for (ModParticle p : particles) {
+                if(p.getType()==ModParticleSheet.DEFAULT_PARTICLE_SHEET){
+                    p.refresh();
+                }
+            }
+        }
     }
 }

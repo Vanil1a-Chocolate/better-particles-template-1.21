@@ -17,10 +17,10 @@ public class AtlasHudOverlay implements HudRenderCallback {
 
     @Override
     public void onHudRender(DrawContext drawContext, RenderTickCounter renderTickCounter) {
+        if(!UseCommandData.changeSprite) return;
         MinecraftClient client = MinecraftClient.getInstance();
-
         testSprite = UseCommandData.getSprite();
-        if (client.player != null && (client.world == null || testSprite == null|| !client.player.getMainHandStack().isOf(SoulGraphPen.getInstance()))) {
+        if (client.player == null || client.world == null || testSprite == null|| !client.player.getMainHandStack().isOf(SoulGraphPen.getInstance())) {
             return;
         }
         Identifier atlasId = testSprite.getAtlasId();

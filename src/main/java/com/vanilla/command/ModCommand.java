@@ -5,11 +5,11 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.vanilla.atlas.AtlasGenerator;
 import com.vanilla.atlas.AtlasSpriteManager;
 import com.vanilla.atlas.CustomTextureLoader;
 import com.vanilla.function.CreateCircle;
 import com.vanilla.function.CreateLine;
+import com.vanilla.gui.AtlasHudOverlay;
 import com.vanilla.particle.ModParticleManager;
 import com.vanilla.util.*;
 import net.fabricmc.api.EnvType;
@@ -34,7 +34,7 @@ public class ModCommand {
         })));
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("modTest2").executes(context -> {
-            AtlasGenerator.generate();
+            ModParticleManager.getInstance().nextParticle();
             return 1;
         })));
 
@@ -60,8 +60,10 @@ public class ModCommand {
                     String name = StringArgumentType.getString(context, "name");
                     if (name.equals("default")) {
                         UseCommandData.changeSprite = false;
+                        AtlasHudOverlay.testSprite = null;
                         return 1;
                     }
+                    ModParticleManager.getInstance().resetCurrentParticle();
                     UseCommandData.changeSprite = true;
                     UseCommandData.changeSprite(name);
                     return 1;
@@ -69,6 +71,10 @@ public class ModCommand {
         ));
         ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("showParticleTexture").executes(context -> {
             List<String> ids = AtlasSpriteManager.getInstance().getAllIds();
+            if (ids.isEmpty()) {
+                SendMessageToPlayer.sendMessageToPlayer("未加载任何贴图!");
+                return 1;
+            }
             for (String id : ids) {
                 SendMessageToPlayer.sendMessageToPlayer(id);
             }

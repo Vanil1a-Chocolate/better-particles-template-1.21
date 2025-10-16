@@ -19,7 +19,8 @@ public final class PointListener {
     private static Vec3d pointB;
     private static boolean wasLeftDown;
     private static boolean wasRightDown;
-
+    private static boolean SLeftWasPressed  = false;
+    private static boolean SRightWasPressed = false;
     public static void onEnterLineMode() {
         ClientTickEvents.END_CLIENT_TICK.register(PointListener::onTick);
         pointA = null;
@@ -28,13 +29,9 @@ public final class PointListener {
         wasRightDown = false;
     }
 
-    private static void onShowVisionParticle(){
-        ClientTickEvents.END_CLIENT_TICK.register(PointListener::onTickLeftClick);
-    }
-
-
     public static void initPointListener(){
-        onShowVisionParticle();
+        ClientTickEvents.END_CLIENT_TICK.register(PointListener::onTickLeftClick);
+        ClientTickEvents.END_CLIENT_TICK.register(PointListener::isPressedLeftOrRight);
     }
 
     private static void onTickLeftClick(MinecraftClient client){
@@ -97,5 +94,22 @@ public final class PointListener {
         if(particle != null){
             SendMessageToPlayer.sendMessageToPlayer("当前面向:"+particle.getHandle());
         }
+    }
+
+    public static void isPressedLeftOrRight(MinecraftClient client){
+        if (client.player == null || !client.player.getMainHandStack().isOf(ModItems.SOUL_GRAPH_PEN) || UseCommandData.changeSprite)
+            return;
+        long window = client.getWindow().getHandle();
+        boolean leftNow  = GLFW.glfwGetKey(window, GLFW.GLFW_KEY_LEFT)  == GLFW.GLFW_PRESS;
+        boolean rightNow = GLFW.glfwGetKey(window, GLFW.GLFW_KEY_RIGHT) == GLFW.GLFW_PRESS;
+        if (leftNow && !SLeftWasPressed) {
+            ModParticleManager.getInstance().preParticle();
+        }
+        if (rightNow && !SRightWasPressed) {
+            ModParticleManager.getInstance().nextParticle();
+        }
+
+        SLeftWasPressed  = leftNow;
+        SRightWasPressed = rightNow;
     }
 }

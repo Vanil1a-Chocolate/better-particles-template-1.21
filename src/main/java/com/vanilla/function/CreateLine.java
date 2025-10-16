@@ -34,7 +34,7 @@ public class CreateLine implements CreateInter {
     }
 
     public CreateLine(int precision){
-        this(ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA.copy(), precision);
+        this(ModParticleManager.getInstance().getCurrentParticleData().copy(), precision);
     }
 
     public static void CreateLineAuto(ParticleData data){
@@ -57,7 +57,7 @@ public class CreateLine implements CreateInter {
     }
 
     public static void CreateLineEz(Vec3d start, Vec3d end, int precision){
-        CreateLineEz(start,end,ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA.copy(),precision);
+        CreateLineEz(start,end,ModParticleManager.getInstance().getCurrentParticleData().copy(),precision);
     }
 
 

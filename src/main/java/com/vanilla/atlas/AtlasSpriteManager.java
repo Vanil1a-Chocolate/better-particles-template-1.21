@@ -9,24 +9,20 @@ import java.util.*;
 
 public class AtlasSpriteManager {
     private static final AtlasSpriteManager INSTANCE= new AtlasSpriteManager();
-    private final Map<Identifier, Sprite> spriteMap = new HashMap<>();
+    private final Map<Identifier, Sprite> PlayerSpriteMap = new HashMap<>();
     private final Map<Identifier, SpriteMeta> metaMap = new HashMap<>();
     private int atlasGlTextureId = -1;
     private Identifier atlasSpriteId = null;
     private AtlasSpriteManager() {}
 
     public void addSpriteMeta(SpriteMeta data) {
-        if (spriteMap.containsKey(data.getTextureId())) {
-            System.out.println("已存在纹理ID：" + data.getTextureId().toString() + "，跳过重复添加！");
-            return;
-        }
         metaMap.put(data.getTextureId(), data);
     }
 
     public void AllMetaToSprite() {
         for (SpriteMeta data : metaMap.values()) {
             Sprite sp=  CreateSpriteFromMeta.createSpriteFromMeta(data);
-            spriteMap.put(data.getTextureId(), sp);
+            PlayerSpriteMap.put(data.getTextureId(), sp);
         }
     }
 
@@ -35,7 +31,7 @@ public class AtlasSpriteManager {
     }
 
     public Sprite getSprite(Identifier textureId) {
-        return spriteMap.get(textureId);
+        return PlayerSpriteMap.get(textureId);
     }
 
     public void setAtlasGlTextureId(int atlasGlTextureId) {
@@ -55,7 +51,7 @@ public class AtlasSpriteManager {
     }
 
     public List<String> getAllIds() {
-        Set<Identifier> allIds = spriteMap.keySet();
+        Set<Identifier> allIds = PlayerSpriteMap.keySet();
         List<String> ids = new ArrayList<>();
         for (Identifier id : allIds) {
             ids.add(id.getPath());

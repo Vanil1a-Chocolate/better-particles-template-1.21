@@ -20,5 +20,8 @@ public class ModFactoryManager {
         return factories.get(sp);
     }
 
+    public static List<SimpleParticleType> getFactoriesHandle(){
+        return factoriesHandle;
+    }
 
 }

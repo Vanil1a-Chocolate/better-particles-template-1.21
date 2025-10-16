@@ -34,7 +34,7 @@ public class ParticleData {
         position = new Vec3d(0,0,0);
         velocity = new Vec3d(0,0,0);
         color = new Color(0,0,0,0);
-        particleType  = ModParticleRegister.SPARKLE_PARTICLE;
+        particleType  = ModParticleRegister.SIMPLE_DEFAULT_PARTICLE;
     }
 
     public static JsonObject DataToJson(ParticleData data) {

@@ -20,7 +20,6 @@ public class UseCommandData {
     }
 
     private static Sprite sprite;
-
     public static void getPositionFromPicked(){
         List<String> handle = ModParticleManager.getInstance().getWarningParticlesHandle();
         String new_handle = handle.getLast();
@@ -28,14 +27,22 @@ public class UseCommandData {
         position = particle.data.getPosition();
     }
 
-    public static void changeSprite(String name){
+    public static void changeSprite(String name,boolean isMes){
         Identifier identifier = Identifier.of(BetterParticles.MOD_ID, name);
         Sprite var_1= AtlasSpriteManager.getInstance().getSprite(identifier);
         if(var_1 == null){
-            SendMessageToPlayer.sendMessageToPlayer("该贴图不存在");
+            if(isMes){
+                SendMessageToPlayer.sendMessageToPlayer("该贴图不存在");
+            }
             return;
         }
         sprite = var_1;
-        SendMessageToPlayer.sendMessageToPlayer("成功切换贴图:"+name);
+        if(isMes){
+            SendMessageToPlayer.sendMessageToPlayer("成功切换贴图:"+name);
+        }
+    }
+
+    public static void changeSprite(String name){
+        changeSprite(name,true);
     }
 }

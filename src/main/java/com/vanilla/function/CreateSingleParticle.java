@@ -11,7 +11,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class CreateSingleParticle implements CreateInter{
-    private ParticleData data = ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA.copy();
+    private ParticleData data = ModParticleManager.getInstance().getCurrentParticleData();
     private String group = "SINGLE_";
 
     public static final  CreateSingleParticle INSTANCE = new CreateSingleParticle(Vec3d.ZERO);

@@ -28,7 +28,7 @@ public class CreateCircle implements CreateInter {
         this(radius,position,data,precision,commandPitchDeg,0);
     }
     public CreateCircle(double radius, Vec3d position, int precision) {
-        this(radius,position,ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA,precision);
+        this(radius,position,ModParticleManager.getInstance().getCurrentParticleData(),precision);
     }
 
     public CreateCircle UseCommandCreateCircleData(Vec3d pos){
