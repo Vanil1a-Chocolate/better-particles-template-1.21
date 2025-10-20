@@ -9,6 +9,7 @@ import com.vanilla.particle.ModParticleRegister;
 import com.vanilla.particle.ParticleData;
 import com.vanilla.util.*;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -19,7 +20,6 @@ public class CreateLine implements CreateInter {
     private final ParticleData data;
     private final int precision;
     private static boolean isVisible = false;
-
     public static final CreateLine INSTANCE = new CreateLine(0);
 
     public CreateLine(Vec3d start, Vec3d end, ParticleData data, int precision){
@@ -129,5 +129,20 @@ public class CreateLine implements CreateInter {
         Vec3d end = DistanceHelper.getDistanceFromTwoVec3d(ReadTextToJson.getStartPos(),J_end);
         CreateLine line = new CreateLine(start,end,ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA.copy(),50);
         line.generate(MinecraftClient.getInstance().world);
+    }
+
+    @Override
+    public byte getId() {
+        return (byte)SoulGraphPen.ParticleMode.CREATE_LINE.getValue();
+    }
+
+    @Override
+    public void write(PacketByteBuf buf) {
+
+    }
+
+    @Override
+    public CreateInter read(PacketByteBuf buf) {
+        return null;
     }
 }

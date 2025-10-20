@@ -8,23 +8,27 @@ import net.minecraft.client.texture.Sprite;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UseCommandData {
     public static Vec3d position;
     public static boolean isMoved = false;
     public static boolean changeSprite = false;
-
+    public static Vec3d center = Vec3d.ZERO;
+    private static List<Vec3d> positions = new ArrayList<>();
     public static Sprite getSprite() {
         return sprite;
     }
 
     private static Sprite sprite;
     public static void getPositionFromPicked(){
+        ModParticleManager  manager = ModParticleManager.getInstance();
         List<String> handle = ModParticleManager.getInstance().getWarningParticlesHandle();
         String new_handle = handle.getLast();
         ModParticle particle = ParticleVisionLocator.getReVisionMap().get(new_handle);
-        position = particle.data.getPosition();
+        positions.add(particle.data.getPosition());
+        manager.cleanWarnParticleByHandle(new_handle);
     }
 
     public static void changeSprite(String name,boolean isMes){
@@ -44,5 +48,11 @@ public class UseCommandData {
 
     public static void changeSprite(String name){
         changeSprite(name,true);
+    }
+
+    public static List<Vec3d> getPosition(){
+        List<Vec3d> out_pos = positions;
+        positions = new ArrayList<>();
+        return out_pos;
     }
 }

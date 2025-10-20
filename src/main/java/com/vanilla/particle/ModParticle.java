@@ -19,6 +19,9 @@ public class ModParticle extends SpriteBillboardParticle {
     public final ParticleData data;
     private String handle;
     private final ModParticleMove move;
+    private final ModParticleWork work;
+    private boolean alwaysAlive = false;
+    private int count;
     protected ModParticle(ClientWorld clientWorld,ParticleData data){
         super(clientWorld,data.getPosition().getX(),data.getPosition().getY(),data.getPosition().getZ(),
                 data.getVelocity().getX(),data.getVelocity().getY(),data.getVelocity().getZ());
@@ -33,10 +36,15 @@ public class ModParticle extends SpriteBillboardParticle {
             this.sheet = data.getSheet();
         }
         this.data = data;
-        this.maxAge = data.getLifeTime();
+        if(data.getLifeTime()== -1){
+            alwaysAlive = true;
+        }else{
+            this.maxAge = data.getLifeTime();
+        }
         this.scale = data.getScale();
         this.alpha = data.getColor().getAlpha();
         this.move = data.getMove();
+        this.work = data.getWork();
     }
 
     public void refresh(){
@@ -59,20 +67,30 @@ public class ModParticle extends SpriteBillboardParticle {
 
     @Override
     public void tick() {
+        count++;
+        if(alwaysAlive){
+            this.maxAge = 256;
+            this.age = 8;
+        }
         if(move != null) {
             Vec3d vec= move.tickMove();
             setPos(vec.x, vec.y, vec.z);
         }
         if(data != null){
+            if(this.work!=null){
+                count = work.work(data,count);
+            }
             if(!data.isMoved()) {
                 this.setVelocity(0, 0, 0);
             }
             this.velocityX = data.getVelocity().getX();
             this.velocityY = data.getVelocity().getY();
             this.velocityZ = data.getVelocity().getZ();
-            if (data.getParticleType() == ModParticleRegister.METEOR_PARTICLE) {
+            if (data.isTickChange()) {
                 setSprite(data.getSpriteProvider().getSprite(age, maxAge));
             }
+            Vec3d d = new Vec3d(this.x, this.y, this.z);
+            data.setPosition(d);
         }
         super.tick();
         if (age++ >= maxAge) {

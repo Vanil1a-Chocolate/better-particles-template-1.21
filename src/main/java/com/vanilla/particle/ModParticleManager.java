@@ -1,8 +1,12 @@
 package com.vanilla.particle;
 
+import com.vanilla.client.ParticlePayload;
+import com.vanilla.function.CreateInter;
 import com.vanilla.util.SendMessageToPlayer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.util.math.Vec3d;
@@ -88,7 +92,7 @@ public final class ModParticleManager {
     private void addParticle(SimpleParticleType particle, ParticleData data, World world){
         Vec3d p = data.getPosition();
         Vec3d v = data.getVelocity();
-        world.addParticle(particle,p.x,p.y,p.z,v.x,v.y,v.z);
+        MinecraftClient.getInstance().particleManager.addParticle(particle,p.x,p.y,p.z,v.x,v.y,v.z);
         ModParticleFactory.getInstance().reSetFlag();
         ModParticleFactory.setModeParticleFactory(null);
     }
@@ -101,6 +105,14 @@ public final class ModParticleManager {
         addParticle(data.getParticleType(),data,world);
     }
 
+
+    public void addParticleAtServer(CreateInter createInter){
+        ParticlePayload payload = new ParticlePayload(createInter);
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client!=null){
+            ClientPlayNetworking.send(payload);
+        }
+    }
 
     public String addWarnParticle(World world, Vec3d p){
         String handle = "WARN_"+ currentHandleGenerate();
@@ -137,8 +149,8 @@ public final class ModParticleManager {
     }
 
     public ParticleData getCurrentParticleData(){
-        if(ModParticleRegister.dataList.isEmpty()) return ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA;
-        return ModParticleRegister.dataList.get(currentParticleIndex);
+        if(ModParticleRegister.dataList.isEmpty()) return ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA.copy();
+        return ModParticleRegister.dataList.get(currentParticleIndex).copy();
     }
 
     public void nextParticle(){

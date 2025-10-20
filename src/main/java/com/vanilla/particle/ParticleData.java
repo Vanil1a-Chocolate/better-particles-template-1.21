@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.client.particle.ParticleTextureSheet;
 import net.minecraft.client.particle.SpriteProvider;
 import net.minecraft.particle.SimpleParticleType;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
 import java.awt.*;
@@ -19,7 +20,10 @@ public class ParticleData {
     private ParticleTextureSheet sheet;
     private ModParticleMove move;
     private SpriteProvider spriteProvider;
-    public ParticleData(Vec3d velocity, Color color, int lifeTime, SimpleParticleType particleType, boolean isMoved, float scale,ParticleTextureSheet sheet) {
+    private Identifier id;
+    private boolean tickChange;
+    private ModParticleWork work;
+    public ParticleData(Vec3d velocity, Color color, int lifeTime, SimpleParticleType particleType, boolean isMoved, float scale,ParticleTextureSheet sheet,boolean tickChange,Identifier identifier) {
         this.velocity = velocity;
         this.color = color;
         this.lifeTime = lifeTime;
@@ -27,6 +31,8 @@ public class ParticleData {
         this.isMoved = isMoved;
         this.scale = scale;
         this.sheet = sheet;
+        this.tickChange = tickChange;
+        this.id = identifier;
     }
 
     public ParticleData(){
@@ -35,6 +41,7 @@ public class ParticleData {
         velocity = new Vec3d(0,0,0);
         color = new Color(0,0,0,0);
         particleType  = ModParticleRegister.SIMPLE_DEFAULT_PARTICLE;
+        tickChange = false;
     }
 
     public static JsonObject DataToJson(ParticleData data) {
@@ -63,8 +70,27 @@ public class ParticleData {
         return velocity;
     }
 
+    public void setScale(float scale) {
+        this.scale = scale;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
     public void setMove(ModParticleMove move) {
         this.move = move;
+    }
+
+    public void setWork(ModParticleWork work) {
+        this.work = work;
+    }
+    public ModParticleWork getWork() {
+        return work;
+    }
+
+    public Identifier getId() {
+        return id;
     }
 
     public ModParticleMove getMove() {
@@ -93,7 +119,18 @@ public class ParticleData {
 
     public float getScale() { return scale; }
 
+    public void setId(Identifier id) { this.id = id; }
+
     public ParticleTextureSheet getSheet() { return sheet; }
+
+    public boolean isTickChange() { return tickChange; }
+
+    public void  setVelocity(Vec3d velocity) { this.velocity = velocity; }
+
+    public void setLifeTime(int lifeTime) {
+        this.lifeTime = lifeTime;
+    }
+
 
     public ParticleData copy() {
         ParticleData copy = new ParticleData();
@@ -106,6 +143,7 @@ public class ParticleData {
         copy.scale = this.scale;
         copy.particleType = this.particleType;
         copy.isMoved = this.isMoved;
+        copy.tickChange = this.tickChange;
         return copy;
     }
 }

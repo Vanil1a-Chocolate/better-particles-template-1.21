@@ -7,6 +7,7 @@ import com.vanilla.particle.ModParticleRegister;
 import com.vanilla.particle.ParticleData;
 import com.vanilla.util.*;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -80,17 +81,7 @@ public class CreateCircle implements CreateInter {
         for(int i =0;i<precision;i++){
             ParticleData data_new = data.copy();
             if(UseCommandData.isMoved){
-                data_new.setMove(()->{
-                    Vec3d vec =  data_new.getPosition();
-                    double angle = Math.atan2(vec.z - position.z, vec.x - position.x);
-                    angle += angle_v;
-                    double var_1 = position.x + radius * Math.cos(angle);
-                    double var_2 = vec.y;
-                    double var_3 = position.z + radius * Math.sin(angle);
-                    Vec3d new_vec  = new Vec3d(var_1, var_2, var_3);
-                    data_new.setPosition(new_vec);
-                    return new_vec;
-                });
+                Rotate.rotateAnyAxis(data_new,position,normal,angle_v);
             }
             double t = 2*Math.PI*i/precision;
             Vec3d point = position.add(u.multiply(Math.cos(t)*radius))
@@ -130,5 +121,20 @@ public class CreateCircle implements CreateInter {
         Vec3d CurrentPos = DistanceHelper.getDistanceFromTwoVec3d(ReadTextToJson.getStartPos(),pos);
         CreateCircle createCircle = new CreateCircle(radius,CurrentPos,ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA.copy(),precision,pitchDeg,yawDeg);
         createCircle.generate(MinecraftClient.getInstance().world);
+    }
+
+    @Override
+    public byte getId() {
+        return (byte)SoulGraphPen.ParticleMode.CREATE_CIRCLE.getValue();
+    }
+
+    @Override
+    public void write(PacketByteBuf buf) {
+
+    }
+
+    @Override
+    public CreateInter read(PacketByteBuf buf) {
+        return null;
     }
 }

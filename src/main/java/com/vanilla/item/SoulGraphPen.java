@@ -16,16 +16,28 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class SoulGraphPen extends Item {
     public enum ParticleMode {
-        CREATE_SINGLE_PARTICLE(1),
-        CREATE_LINE(2),
-        CREATE_CIRCLE(3);
+        CREATE_SINGLE_PARTICLE(1,CreateSingleParticle.INSTANCE),
+        CREATE_LINE(2,CreateLine.INSTANCE),
+        CREATE_CIRCLE(3,CreateCircle.INSTANCE),;
 
+        private static final Map<Integer,CreateInter> ParticleModeMap = new HashMap<>();
+
+        static {
+            for (ParticleMode p : ParticleMode.values()) {
+                ParticleModeMap.put(p.value,p.inter);
+            }
+        }
 
         private final int value ;
-        ParticleMode(int i){
+        private final CreateInter inter;
+        ParticleMode(int i,CreateInter createInter) {
             value = i;
+            inter = createInter;
         }
 
         public ParticleMode next() {
@@ -39,6 +51,10 @@ public class SoulGraphPen extends Item {
 
         public int getValue() {
             return value;
+        }
+
+        public static CreateInter get(int value) {
+            return ParticleModeMap.get(value);
         }
     }
 
@@ -93,8 +109,9 @@ public class SoulGraphPen extends Item {
             Vec3d pos = PlayerHandler.getPlayerEyePosition(user);
             switch (CurrentMode) {
                 case CREATE_SINGLE_PARTICLE:
-                    CreateInter single = new CreateSingleParticle(pos);
-                    single.generate(world);
+//                    CreateInter single = new CreateSingleParticle(pos);
+//                    single.generate(world);
+                    CreateSingleParticle.CreateTickChangeSingleParticle(pos);
                     break;
                 case CREATE_LINE:
                     CreateLine createLine = new CreateLine(50);

@@ -9,6 +9,7 @@ import com.vanilla.atlas.AtlasSpriteManager;
 import com.vanilla.atlas.CustomTextureLoader;
 import com.vanilla.function.CreateCircle;
 import com.vanilla.function.CreateLine;
+import com.vanilla.function.CreateSingleParticle;
 import com.vanilla.gui.AtlasHudOverlay;
 import com.vanilla.particle.ModParticleManager;
 import com.vanilla.util.*;
@@ -17,6 +18,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 
@@ -34,7 +36,7 @@ public class ModCommand {
         })));
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("modTest2").executes(context -> {
-            ModParticleManager.getInstance().nextParticle();
+            CreateSingleParticle.CreateSingleParticleByList();
             return 1;
         })));
 
@@ -154,6 +156,15 @@ public class ModCommand {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("setPosition")
                 .executes(commandContext -> {
                     UseCommandData.getPositionFromPicked();
+                    return 1;
+                })
+        ));
+
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher,registryAccess)-> dispatcher.register(ClientCommandManager.literal("setCenter")
+                .executes(commandContext -> {
+                    if (MinecraftClient.getInstance().player != null) {
+                        UseCommandData.center = MinecraftClient.getInstance().player.getPos();
+                    }
                     return 1;
                 })
         ));

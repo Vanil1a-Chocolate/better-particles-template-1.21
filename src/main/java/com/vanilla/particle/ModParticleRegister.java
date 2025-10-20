@@ -17,6 +17,10 @@ import java.util.List;
 
 public class ModParticleRegister {
 
+    public static Identifier modIdentifier(String name) {
+        return Identifier.of(BetterParticles.MOD_ID, name);
+    }
+
     public static final List<ParticleData> dataList = new ArrayList<>();
     public static final SimpleParticleType SIMPLE_DEFAULT_PARTICLE = FabricParticleTypes.simple();
     public static final SimpleParticleType WARING_PARTICLE = FabricParticleTypes.simple();
@@ -24,12 +28,12 @@ public class ModParticleRegister {
     public static final SimpleParticleType DIY_PARTICLE = FabricParticleTypes.simple();
     public static final SimpleParticleType METEOR_PARTICLE = FabricParticleTypes.simple();
 
-    public static final ParticleData WARNING_PARTICLE_DATA = new ParticleData(Vec3d.ZERO, new Color(0,0,0,1),5000,WARING_PARTICLE,false,1, ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT);
-    public static final ParticleData SIMPLE_DEFAULT_PARTICLE_DATA = new ParticleData(Vec3d.ZERO,new Color(0,0,0,1),5000, SIMPLE_DEFAULT_PARTICLE,false,0.8f,ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT);
-    public static final ParticleData PREVIEW_PARTICLE_DATA = new ParticleData(Vec3d.ZERO,new Color(0f,0f,0f,0.05f),1, PREVIEW_PARTICLE,false,0.3f,ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT);
-    public static final ParticleData TRANSPARENT_PARTICLE_DATA = new ParticleData(Vec3d.ZERO,new Color(0f,0f,0f,0),5000, PREVIEW_PARTICLE,false,0.3f,ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT);
-    public static final ParticleData DIY_PARTICLE_DATA = new ParticleData(Vec3d.ZERO,new Color(0f,0f,0f,0),5000, SIMPLE_DEFAULT_PARTICLE,false,0.3f, ModParticleSheet.DEFAULT_PARTICLE_SHEET);
-    public static final ParticleData METEOR_PARTICLE_DATA = new ParticleData(Vec3d.ZERO,new Color(0,0,0,1),20,METEOR_PARTICLE,false,0.4f, ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT);
+    public static final ParticleData WARNING_PARTICLE_DATA = new ParticleData(Vec3d.ZERO, new Color(0,0,0,1),5000,WARING_PARTICLE,false,1, ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT,false,modIdentifier("warn_particle"));
+    public static final ParticleData SIMPLE_DEFAULT_PARTICLE_DATA = new ParticleData(Vec3d.ZERO,new Color(0,0,0,1),5000, SIMPLE_DEFAULT_PARTICLE,false,0.8f,ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT,false,modIdentifier("simple_particle"));
+    public static final ParticleData PREVIEW_PARTICLE_DATA = new ParticleData(Vec3d.ZERO,new Color(0f,0f,0f,0.05f),1, PREVIEW_PARTICLE,false,0.3f,ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT,false,modIdentifier("preview_particle"));
+    public static final ParticleData TRANSPARENT_PARTICLE_DATA = new ParticleData(Vec3d.ZERO,new Color(0f,0f,0f,0),5000, PREVIEW_PARTICLE,false,0.3f,ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT,false,modIdentifier("transparent_particle"));
+    public static final ParticleData DIY_PARTICLE_DATA = new ParticleData(Vec3d.ZERO,new Color(0f,0f,0f,0),5000, SIMPLE_DEFAULT_PARTICLE,false,0.3f, ModParticleSheet.DEFAULT_PARTICLE_SHEET,false,modIdentifier("diy_particle"));
+    public static final ParticleData METEOR_PARTICLE_DATA = new ParticleData(Vec3d.ZERO,new Color(0,0,0,1),20,METEOR_PARTICLE,false,0.4f, ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT,true,modIdentifier("meteor_particle"));
     public static void initParticles(){
         registerParticles("magic", SIMPLE_DEFAULT_PARTICLE);
         registerParticles("warn",WARING_PARTICLE);
