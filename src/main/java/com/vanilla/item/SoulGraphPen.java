@@ -109,22 +109,22 @@ public class SoulGraphPen extends Item {
             Vec3d pos = PlayerHandler.getPlayerEyePosition(user);
             switch (CurrentMode) {
                 case CREATE_SINGLE_PARTICLE:
-//                    CreateInter single = new CreateSingleParticle(pos);
-//                    single.generate(world);
-                    CreateSingleParticle.CreateTickChangeSingleParticle(pos);
+                    CreateInter single = new CreateSingleParticle(pos);
+                    single.serverGenerate();
                     break;
                 case CREATE_LINE:
                     CreateLine createLine = new CreateLine(50);
-                    createLine.generate(world);
+                    System.out.println(createLine);
+                    createLine.serverGenerate();
                     break;
                 case CREATE_CIRCLE:
                     if(CreateCircle.CommandCreateCircleData != null){
                         CreateCircle create =  CreateCircle.INSTANCE.UseCommandCreateCircleData(user.getPos());
-                        create.generate(world);
+                        create.serverGenerate();
                         CreateCircle.CommandCreateCircleData = null;
                     }else{
                         CreateInter create = new CreateCircle(5,user.getPos(),60);
-                        create.generate(world);
+                        create.serverGenerate();
                     }
                     break;
             }

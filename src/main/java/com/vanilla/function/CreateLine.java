@@ -2,28 +2,31 @@ package com.vanilla.function;
 
 import com.google.gson.JsonObject;
 import com.vanilla.item.SoulGraphPen;
+import com.vanilla.network.ParticleDataBufferHelper;
+import com.vanilla.obj.GenerateResult;
+import com.vanilla.obj.GenerateResultCustom;
 import com.vanilla.obj.Point;
 import com.vanilla.particle.ModParticle;
 import com.vanilla.particle.ModParticleManager;
 import com.vanilla.particle.ModParticleRegister;
 import com.vanilla.particle.ParticleData;
 import com.vanilla.util.*;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class CreateLine implements CreateInter {
     private final ParticleData data;
     private final int precision;
+    private Point point;
     private static boolean isVisible = false;
     public static final CreateLine INSTANCE = new CreateLine(0);
 
     public CreateLine(Vec3d start, Vec3d end, ParticleData data, int precision){
-        Point.INSTANCE = new Point(start,end);
+        point = new Point(start,end);
         this.data = data;
         this.precision = precision;
     }
@@ -42,7 +45,7 @@ public class CreateLine implements CreateInter {
         if (point == null) return;
         double dist = point.getStart().distanceTo(point.getEnd());
         CreateLine create = new CreateLine(data,(int) dist);
-        create.generate(MinecraftClient.getInstance().world);
+        create.clientGenerate();
     }
 
     public static void CreateLineAuto(Vec3d start,Vec3d end,ParticleData data){
@@ -53,7 +56,7 @@ public class CreateLine implements CreateInter {
 
     public static void CreateLineEz(Vec3d start, Vec3d end, ParticleData data, int precision){
         CreateLine createLine = new CreateLine(start, end, data, precision);
-        createLine.generate(MinecraftClient.getInstance().world);
+        createLine.clientGenerate();
     }
 
     public static void CreateLineEz(Vec3d start, Vec3d end, int precision){
@@ -81,10 +84,12 @@ public class CreateLine implements CreateInter {
     }
 
     @Override
-    public void generate(World world) {
-        Point point =  Point.INSTANCE;
+    public GenerateResultCustom generate() {
+        if(point==null){
+            point = Point.INSTANCE;
+        }
         if(point == null){
-            return;
+            return null;
         }
         Vec3d start = point.getStart();
         Vec3d end = point.getEnd();
@@ -98,13 +103,15 @@ public class CreateLine implements CreateInter {
             }
         }
         String handle = "LINE_"+ particleManager.outGetCurrentHandle();
+        List<GenerateResult> results = new ArrayList<>();
         for(int i =0;i<precision;i++){
             double t = (double) i / (precision - 1);
             Vec3d p = start.lerp(end, t);
             data.setPosition(p);
-            particleManager.addParticle(data,world,handle);
+            results.add(new GenerateResult(data.copy(),handle));
         }
         Point.INSTANCE = null;
+        return new  GenerateResultCustom(this,results);
     }
 
     @Override
@@ -128,7 +135,7 @@ public class CreateLine implements CreateInter {
         Vec3d start = DistanceHelper.getDistanceFromTwoVec3d(ReadTextToJson.getStartPos(),J_start);
         Vec3d end = DistanceHelper.getDistanceFromTwoVec3d(ReadTextToJson.getStartPos(),J_end);
         CreateLine line = new CreateLine(start,end,ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA.copy(),50);
-        line.generate(MinecraftClient.getInstance().world);
+        line.clientGenerate();
     }
 
     @Override
@@ -138,11 +145,23 @@ public class CreateLine implements CreateInter {
 
     @Override
     public void write(PacketByteBuf buf) {
-
+        System.out.println("执行一次");
+        System.out.println(this);
+        ParticleDataBufferHelper.writePoint(buf, point);
+        ParticleDataBufferHelper.write(buf, data);
+        buf.writeInt(precision);
     }
 
     @Override
     public CreateInter read(PacketByteBuf buf) {
-        return null;
+        Point point = ParticleDataBufferHelper.readPoint(buf);
+        ParticleData data = ParticleDataBufferHelper.read(buf);
+        int precision = buf.readInt();
+        return new CreateLine(point.getStart(),point.getEnd(),data,precision);
+    }
+
+    @Override
+    public ParticleData getData(){
+        return  data;
     }
 }

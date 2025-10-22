@@ -84,7 +84,7 @@ public class ParticleVisionLocator {
             reVisionMap.remove(warnHandle);
         }else{
             Vec3d pos = particle.data.getPosition();
-            String handle = ModParticleManager.getInstance().addWarnParticle(MinecraftClient.getInstance().world, pos);
+            String handle = ModParticleManager.getInstance().addWarnParticle(pos);
             visionMap.put(particle.getHandle(), handle);
             reVisionMap.put(handle, particle);
         }

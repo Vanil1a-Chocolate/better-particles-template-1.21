@@ -36,7 +36,7 @@ public class Draw {
                 point = center.add(local);
             }
             CreateSingleParticle create = new CreateSingleParticle(point);
-            create.generate(MinecraftClient.getInstance().world);
+            create.clientGenerate();
         }
     }
 }

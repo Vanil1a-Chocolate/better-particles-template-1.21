@@ -1,4 +1,4 @@
-package com.vanilla.client;
+package com.vanilla.network;
 
 import com.vanilla.BetterParticles;
 import com.vanilla.function.CreateInter;
@@ -10,14 +10,14 @@ import net.minecraft.util.Identifier;
 
 public record ParticlePayload(CreateInter create) implements CustomPayload {
     public static final Identifier ID = Identifier.of(BetterParticles.MOD_ID, "client_particle");
-
+    public static final CustomPayload.Id<ParticlePayload> TYPE = new CustomPayload.Id<>(ID);
     public static final PacketCodec<PacketByteBuf, ParticlePayload> CODEC = PacketCodec.of(
             ParticlePayload::write,
             ParticlePayload::read
     );
 
     private static void write(ParticlePayload payload, PacketByteBuf buf) {
-        buf.writeInt(payload.create.getId());
+        buf.writeByte(payload.create.getId());
         payload.create.write(buf);
     }
 
@@ -31,7 +31,7 @@ public record ParticlePayload(CreateInter create) implements CustomPayload {
     }
 
     @Override
-    public Id<? extends CustomPayload> getId() {
-        return new CustomPayload.Id<>(ID);
+    public CustomPayload.Id<? extends CustomPayload> getId() {
+        return TYPE;
     }
 }

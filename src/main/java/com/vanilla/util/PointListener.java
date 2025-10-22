@@ -57,7 +57,7 @@ public final class PointListener {
         if (nowLeft && !wasLeftDown) {
             SendMessageToPlayer.sendMessageToPlayer("第一个点已记录");
             pointA = player.getPos().add(0, player.getEyeHeight(player.getPose()), 0);
-            ModParticleManager.getInstance().addWarnParticle(client.world, pointA);
+            ModParticleManager.getInstance().addWarnParticle( pointA);
             wasLeftDown = true;
         }
 
@@ -65,7 +65,7 @@ public final class PointListener {
         if (nowRight && !wasRightDown && pointA != null) {
             SendMessageToPlayer.sendMessageToPlayer("第二个点已记录");
             pointB = player.getPos().add(0, player.getEyeHeight(player.getPose()), 0);
-            ModParticleManager.getInstance().addWarnParticle(client.world,pointB);
+            ModParticleManager.getInstance().addWarnParticle(pointB);
             onPointsReady(pointA, pointB);
             pointA = null;
             pointB = null;

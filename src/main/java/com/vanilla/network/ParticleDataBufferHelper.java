@@ -1,5 +1,6 @@
-package com.vanilla.client;
+package com.vanilla.network;
 
+import com.vanilla.obj.Point;
 import com.vanilla.particle.ParticleData;
 import net.minecraft.network.PacketByteBuf;
 
@@ -29,11 +30,20 @@ public class ParticleDataBufferHelper {
         buf.writeByte(color.getAlpha());
     }
 
+    public static void writePoint(PacketByteBuf buf, Point point) {
+        buf.writeVec3d(point.getStart());
+        buf.writeVec3d(point.getEnd());
+    }
+
+    public static Point readPoint(PacketByteBuf buf) {
+        return new Point(buf.readVec3d(), buf.readVec3d());
+    }
+
     private static Color readColor(PacketByteBuf buf) {
-        int red = buf.readByte();
-        int green = buf.readByte();
-        int blue = buf.readByte();
-        int alpha = buf.readByte();
+        int red = buf.readByte()& 0xFF;
+        int green = buf.readByte()& 0xFF;
+        int blue = buf.readByte()& 0xFF;
+        int alpha = buf.readByte()& 0xFF;
         return new Color(red, green, blue, alpha);
     }
 }

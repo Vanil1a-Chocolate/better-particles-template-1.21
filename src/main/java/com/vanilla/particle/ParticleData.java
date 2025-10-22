@@ -132,6 +132,11 @@ public class ParticleData {
     }
 
 
+    @Override
+    public String toString(){
+        return position.toString() + " " + velocity.toString() + " " + color.toString() + " " + lifeTime;
+    }
+
     public ParticleData copy() {
         ParticleData copy = new ParticleData();
         copy.sheet = this.sheet;
@@ -144,6 +149,7 @@ public class ParticleData {
         copy.particleType = this.particleType;
         copy.isMoved = this.isMoved;
         copy.tickChange = this.tickChange;
+        copy.id = this.id;
         return copy;
     }
 }

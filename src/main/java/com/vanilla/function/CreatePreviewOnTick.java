@@ -26,10 +26,10 @@ public class CreatePreviewOnTick {
         ModParticleRegister.PREVIEW_PARTICLE_DATA.setPosition(pos);
         if(SoulGraphPen.CurrentMode == SoulGraphPen.ParticleMode.CREATE_SINGLE_PARTICLE){
             CreateSingleParticle create = new CreateSingleParticle(ModParticleRegister.PREVIEW_PARTICLE_DATA,"VIEW_");
-            create.generate(client.world);
+            create.clientGenerate();
         }else if(SoulGraphPen.CurrentMode == SoulGraphPen.ParticleMode.CREATE_CIRCLE){
             CreateCircle create = new CreateCircle(5,pos,ModParticleRegister.PREVIEW_PARTICLE_DATA,60);
-            create.generate(client.world);
+            create.clientGenerate();
         }
 
     }

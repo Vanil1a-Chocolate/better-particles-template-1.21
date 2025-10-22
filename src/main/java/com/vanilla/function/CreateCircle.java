@@ -2,14 +2,18 @@ package com.vanilla.function;
 
 import com.google.gson.JsonObject;
 import com.vanilla.item.SoulGraphPen;
+import com.vanilla.network.ParticleDataBufferHelper;
+import com.vanilla.obj.GenerateResult;
+import com.vanilla.obj.GenerateResultCustom;
 import com.vanilla.particle.ModParticleManager;
 import com.vanilla.particle.ModParticleRegister;
 import com.vanilla.particle.ParticleData;
 import com.vanilla.util.*;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CreateCircle implements CreateInter {
     private final double radius;
@@ -45,7 +49,7 @@ public class CreateCircle implements CreateInter {
         this.yawDeg = yawDeg;
     }
     @Override
-    public void generate(World world) {
+    public GenerateResultCustom generate() {
         if(UseCommandData.position!=null){
             position = UseCommandData.position;
         }
@@ -72,7 +76,7 @@ public class CreateCircle implements CreateInter {
 
         ModParticleManager particleManager = ModParticleManager.getInstance();
         String handle = "CIRCLE_"+ particleManager.outGetCurrentHandle();
-
+        List<GenerateResult> results = new ArrayList<>();
         if(data.getParticleType()!= ModParticleRegister.PREVIEW_PARTICLE){
             if (SoulGraphPen.isSaved){
                 SaveJsonToText.getInstance().saveToTextFile(toJson(data));
@@ -87,11 +91,12 @@ public class CreateCircle implements CreateInter {
             Vec3d point = position.add(u.multiply(Math.cos(t)*radius))
                                   .add(v.multiply(Math.sin(t)*radius));
             data_new.setPosition(point);
-            particleManager.addParticle(data_new,world,handle);
+            results.add(new GenerateResult(data_new,handle));
         }
         ParticleData data_new = ModParticleRegister.TRANSPARENT_PARTICLE_DATA.copy();
         data_new.setPosition(position);
-        particleManager.addParticle(data_new,world,handle+"_CENTER");
+        results.add(new GenerateResult(data_new,handle+"_CENTER"));
+        return new GenerateResultCustom(this,results);
     }
 
     @Override
@@ -120,7 +125,7 @@ public class CreateCircle implements CreateInter {
         Vec3d pos = JsonHelper.getVec3dFromJsonEz(json);
         Vec3d CurrentPos = DistanceHelper.getDistanceFromTwoVec3d(ReadTextToJson.getStartPos(),pos);
         CreateCircle createCircle = new CreateCircle(radius,CurrentPos,ModParticleRegister.SIMPLE_DEFAULT_PARTICLE_DATA.copy(),precision,pitchDeg,yawDeg);
-        createCircle.generate(MinecraftClient.getInstance().world);
+        createCircle.clientGenerate();
     }
 
     @Override
@@ -130,11 +135,27 @@ public class CreateCircle implements CreateInter {
 
     @Override
     public void write(PacketByteBuf buf) {
-
+            buf.writeVec3d(position);
+            buf.writeInt(precision);
+            buf.writeDouble(pitchDeg);
+            buf.writeDouble(yawDeg);
+            buf.writeDouble(radius);
+            ParticleDataBufferHelper.write(buf, data);
     }
 
     @Override
     public CreateInter read(PacketByteBuf buf) {
-        return null;
+        Vec3d position = buf.readVec3d();
+        int precision = buf.readInt();
+        double pitchDeg = buf.readDouble();
+        double yawDeg = buf.readDouble();
+        double radius = buf.readDouble();
+        ParticleData data = ParticleDataBufferHelper.read(buf);
+        return new CreateCircle(radius,position,data,precision,pitchDeg,yawDeg);
+    }
+
+    @Override
+    public ParticleData getData(){
+        return data;
     }
 }

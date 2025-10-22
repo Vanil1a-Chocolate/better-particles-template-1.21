@@ -1,16 +1,16 @@
 package com.vanilla.function;
 
 import com.google.gson.JsonObject;
-import com.vanilla.client.ParticleDataBufferHelper;
+import com.vanilla.network.ParticleDataBufferHelper;
 import com.vanilla.item.SoulGraphPen;
+import com.vanilla.obj.GenerateResult;
+import com.vanilla.obj.GenerateResultCustom;
 import com.vanilla.particle.ModParticleManager;
 import com.vanilla.particle.ModParticleRegister;
 import com.vanilla.particle.ParticleData;
 import com.vanilla.util.*;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,12 +36,9 @@ public class CreateSingleParticle implements CreateInter{
         }
     }
 
-    public CreateSingleParticle(ParticleData data,Vec3d pos) {
-        data.setPosition(pos);
-        if(UseCommandData.isMoved){
-            Vec3d yAxis = new Vec3d(1, 0, 0);
-            Rotate.rotateAnyAxis(data,UseCommandData.center,yAxis,0.5);
-        }
+    public CreateSingleParticle(ParticleData data) {
+        this(data.getPosition());
+        this.data = data;
     }
 
     public static void CreateTickChangeSingleParticle(Vec3d pos) {
@@ -52,12 +49,12 @@ public class CreateSingleParticle implements CreateInter{
             if(var_2>0){
                 Vec3d p = var_1.getPosition();
                 CreateSingleParticle c = new CreateSingleParticle(p);
-                c.generate(MinecraftClient.getInstance().world);
+                c.clientGenerate();
                 return 0;
             }
             return var_2;
         });
-        cr.generate(MinecraftClient.getInstance().world);
+        cr.clientGenerate();
     }
 
     public static void CreateSingleParticleByList(){
@@ -78,15 +75,15 @@ public class CreateSingleParticle implements CreateInter{
             }
             var_1.setVelocity(result.get(i));
             CreateSingleParticle c = new CreateSingleParticle(var_1.getPosition());
-            c.generate(MinecraftClient.getInstance().world);
+            c.clientGenerate();
             return count;
         }));
         cr.getData().setLifeTime(-1);
-        cr.generate(MinecraftClient.getInstance().world);
+        cr.clientGenerate();
     }
     
     @Override
-    public void generate(World world) {
+    public GenerateResultCustom generate() {
         ModParticleManager manager = ModParticleManager.getInstance();
         String handle = group + manager.outGetCurrentHandle();
         if(data.getParticleType()!= ModParticleRegister.PREVIEW_PARTICLE){
@@ -94,7 +91,9 @@ public class CreateSingleParticle implements CreateInter{
                 SaveJsonToText.getInstance().saveToTextFile(toJson(data));
             }
         }
-        manager.addParticle(data,world,handle);
+        List<GenerateResult> result = new ArrayList<>();
+        result.add(new GenerateResult(data,handle));
+        return new GenerateResultCustom(this,result);
     }
 
     public ParticleData getData() {
@@ -117,7 +116,7 @@ public class CreateSingleParticle implements CreateInter{
         Vec3d pos = JsonHelper.getVec3dFromJsonEz(json);
         Vec3d NewPos = DistanceHelper.getDistanceFromTwoVec3d(ReadTextToJson.getStartPos(),pos);
         CreateSingleParticle particle = new CreateSingleParticle(NewPos);
-        particle.generate(MinecraftClient.getInstance().world);
+        particle.clientGenerate();
     }
 
     @Override
@@ -131,9 +130,11 @@ public class CreateSingleParticle implements CreateInter{
         ParticleDataBufferHelper.write(buf,data);
     }
 
+    @Override
     public CreateInter read(PacketByteBuf buf) {
         Vec3d pos = buf.readVec3d();
         ParticleData data = ParticleDataBufferHelper.read(buf);
-        return new CreateSingleParticle(data,pos);
+        data.setPosition(pos);
+        return new CreateSingleParticle(data);
     }
 }

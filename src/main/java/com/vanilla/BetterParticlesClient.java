@@ -1,6 +1,7 @@
 package com.vanilla;
 
 import com.vanilla.atlas.AtlasGenerator;
+import com.vanilla.network.ParticleNetWork;
 import com.vanilla.command.ModCommand;
 import com.vanilla.function.CreateCircle;
 import com.vanilla.function.CreatePreviewOnTick;
@@ -30,6 +31,8 @@ public class BetterParticlesClient implements ClientModInitializer {
             CreatePreviewOnTick.initPreview();
             KeyBindingUtil.initKeyBindings();
             PointListener.initPointListener();
+            ParticleNetWork.initServerToClient();
+            ParticleNetWork.initClientToServer();
             HudRenderCallback.EVENT.register(new AtlasHudOverlay());
             ClientPlayConnectionEvents.JOIN.register((handler, sender, client)->{
                 AtlasGenerator.generate();

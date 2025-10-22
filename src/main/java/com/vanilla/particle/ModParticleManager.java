@@ -1,7 +1,7 @@
 package com.vanilla.particle;
 
-import com.vanilla.client.ParticlePayload;
-import com.vanilla.function.CreateInter;
+import com.vanilla.network.ParticlePayload;
+import com.vanilla.obj.GenerateResultCustom;
 import com.vanilla.util.SendMessageToPlayer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -10,7 +10,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -89,7 +88,7 @@ public final class ModParticleManager {
         return true;
     }
 
-    private void addParticle(SimpleParticleType particle, ParticleData data, World world){
+    private void addParticle(SimpleParticleType particle, ParticleData data){
         Vec3d p = data.getPosition();
         Vec3d v = data.getVelocity();
         MinecraftClient.getInstance().particleManager.addParticle(particle,p.x,p.y,p.z,v.x,v.y,v.z);
@@ -97,28 +96,29 @@ public final class ModParticleManager {
         ModParticleFactory.setModeParticleFactory(null);
     }
 
-    public void addParticle( ParticleData data, World world,String handle){
+    public void addParticle( ParticleData data,String handle){
         ModParticleFactory.setModeParticleFactoryEz(data.getParticleType());
         ModParticleFactory factory = ModParticleFactory.getInstance();
         factory.setData(data);
         factory.setHandle(handle);
-        addParticle(data.getParticleType(),data,world);
+        addParticle(data.getParticleType(),data);
     }
 
 
-    public void addParticleAtServer(CreateInter createInter){
-        ParticlePayload payload = new ParticlePayload(createInter);
+    public void addParticleAtServer(GenerateResultCustom custom){
+        ParticlePayload payload = new ParticlePayload(custom.inter());
         MinecraftClient client = MinecraftClient.getInstance();
         if (client!=null){
             ClientPlayNetworking.send(payload);
         }
+        custom.inter().clientGenerate(custom);
     }
 
-    public String addWarnParticle(World world, Vec3d p){
+    public String addWarnParticle(Vec3d p){
         String handle = "WARN_"+ currentHandleGenerate();
         warningParticlesHandle.add(handle);
         ModParticleRegister.WARNING_PARTICLE_DATA.setPosition(p);
-        addParticle(ModParticleRegister.WARNING_PARTICLE_DATA,world,handle);
+        addParticle(ModParticleRegister.WARNING_PARTICLE_DATA,handle);
         return handle;
     }
 
